@@ -73,6 +73,11 @@ no database to stand up.
 **Trace a request end to end.** Browser → filter chain → dispatcher → controller →
 service → transaction → repository → SQL, as one diagram you can step through.
 
+**Be shown around once.** Every page introduces itself the first time you open
+it — a spotlight card that points at the toolbar, the passport and the shortcuts,
+one stop at a time, with a *Skip tour* link in the corner. It remembers, per
+page, that you have seen it.
+
 **Hover for the semantic passport.** Every node and relationship carries a
 summary and three specific points — not "a service handles business logic", but
 "`findAll()` loads the books, then a getter is called per book while rendering".
@@ -169,13 +174,17 @@ start index.html        # Windows — or just double-click it
 
 That is the entire setup. Then:
 
-1. **Read [guide.html](guide.html)** — 10 minutes, and you will know every button.
-2. **Open the roadmap** from *Tracks* and work top to bottom inside a track.
-3. **Hover instead of reading.** If a card says `walkthrough`, take it — that is
+1. **Let the tour run.** The first time you open any page — the hub, the guide,
+   or one of the 21 diagrams — a spotlight walks you through that page in under
+   a minute: what the buttons do, where the shortcuts are. Skip it whenever you
+   like; press `U` or the *Tour* button to run it again.
+2. **Read [guide.html](guide.html)** — 10 minutes, and you will know every button.
+3. **Open the roadmap** from *Tracks* and work top to bottom inside a track.
+4. **Hover instead of reading.** If a card says `walkthrough`, take it — that is
    the same material as a step-by-step trace through the code.
-4. **Press `P` when you want the short version** of a diagram, `C` for the code,
+5. **Press `P` when you want the short version** of a diagram, `C` for the code,
    `Q` to check yourself.
-5. **Press `?` any time.** You will not break anything.
+6. **Press `?` any time.** You will not break anything.
 
 ### Keyboard
 
@@ -185,6 +194,7 @@ That is the entire setup. Then:
 | `Q` · `N` · `P` · `C` | Quiz · Notes · Present mode · Code lab |
 | `G` · `T` · `I` | Glossary · Debug by symptom · Interview bank |
 | `?` · `Esc` | Help · close whatever is open |
+| `U` | Tour — the walk through this page, again |
 | `1` – `6` | Hub tabs |
 | `→` `Space` `←` | Step through Present mode (`Home` / `End` jump to the ends) |
 | `Tab` | Move between nodes — the passport follows |
@@ -255,6 +265,7 @@ base diagram files — step 5 rewrites them.
 | Hover passports | `node tools/probe-hover.mjs` | 21 / 21 |
 | Source viewer / code lab | `node tools/probe-code-viewer.mjs` · `probe-code-lab.mjs` | 34/34 · 30/30 |
 | Shared kit, deep links | `node tools/probe-kit.mjs` | 5 / 5 |
+| First-visit tour | `node tools/probe-tour.mjs` | 40 / 40 |
 | App tests | `bookstore\test.cmd` | 15 / 15 |
 
 The probes drive a real Chrome over CDP, so they fail when the page actually
