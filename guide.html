@@ -296,8 +296,10 @@
         passport for every node in that step. <kbd>&rarr;</kbd>, <kbd>Space</kbd> or <kbd>P</kbd> moves forward,
         <kbd>&larr;</kbd> moves back, <kbd>Home</kbd> and <kbd>End</kbd> jump to the ends.</p></div>
       <div class="card"><h3><i class="dot"></i>The toolbar on top</h3>
-        <p>Search, Walk through, Code lab, Quiz, Notes, Present, Terms, Debug, Interview, Hub - all one click away.
-        Every button also shows its shortcut.</p></div>
+        <p>Search, Walk through, Code lab, Quiz, Notes, Present, Tour, Terms, Debug, Interview, Hub - all one click away.
+        Every button also shows its shortcut. On your first visit each page walks you through itself once - a
+        spotlight card that points at the diagram, the passport, the toolbar and the shortcuts - and the Tour
+        button (or <kbd>U</kbd>) brings that walk back whenever you want it.</p></div>
       <div class="card"><h3><i class="dot"></i>Deep links</h3>
         <p>Any page can also be opened like this: <code class="inline-code">...html#node=query101</code> (focus a specific node)
         or <code class="inline-code">...html#view=quiz</code> (open the quiz panel right away). Keep links like that in your notes or bookmarks.</p></div>
@@ -425,6 +427,7 @@
         <tr><td class="k"><kbd>T</kbd></td><td class="d">Debug / troubleshooting - 47 symptom-first entries</td></tr>
         <tr><td class="k"><kbd>I</kbd></td><td class="d">Interview bank - 74 questions with model answers</td></tr>
         <tr><td class="k"><kbd>?</kbd></td><td class="d">Help - shortcut list and code lab explanation</td></tr>
+        <tr><td class="k"><kbd>U</kbd></td><td class="d">Tour - the one-minute walk through this page (also a Tour button in the toolbar)</td></tr>
         <tr><td class="k"><kbd>Esc</kbd></td><td class="d">Close any panel</td></tr>
         <tr><td class="k"><kbd>&rarr;</kbd> <kbd>Space</kbd> <kbd>&larr;</kbd></td><td class="d">Step forward / back inside Present mode (<kbd>Home</kbd> and <kbd>End</kbd> jump to the ends)</td></tr>
         <tr><td class="k"><kbd>Tab</kbd></td><td class="d">Move from node to node, open the hover passport with the keyboard too</td></tr>
@@ -608,6 +611,7 @@
 </footer>
 <button id="totop" type="button" aria-label="Back to top">&uarr; Top</button>
 
+<script src="tour.js"></script>
 <script>
 (function () {
   'use strict';

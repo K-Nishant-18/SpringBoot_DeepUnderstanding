@@ -26,6 +26,7 @@ const MARKERS = [
   ['sb:hover', 2],
   ['<link rel="stylesheet" href="sbkit.css">', 1],
   ['src="sbkit.js"', 1],
+  ['src="tour.js"', 1],
   ['src="concepts.js"', 1],
   ['src="content-index.js"', 1],
   ['src="study-data.js"', 1],

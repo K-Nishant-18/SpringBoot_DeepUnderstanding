@@ -1058,6 +1058,7 @@
       '<tr><td>t</td><td>Troubleshooting</td></tr>' +
       '<tr><td>i</td><td>Interview bank</td></tr>' +
       '<tr><td>c</td><td>Code lab: concepts, mirrored source and walkthroughs</td></tr>' +
+      '<tr><td>u</td><td>Take the tour: a one-minute walk through this page</td></tr>' +
       '<tr><td>&larr; &rarr; Space</td><td>Step back / forward through Present mode; Home and End jump to the ends</td></tr>' +
       '<tr><td>Esc</td><td>Close</td></tr>' +
       '</tbody>';
