@@ -62,7 +62,7 @@ no database to stand up.
 | **Learning Spring Boot** | You get the mental model first, in the order that actually builds one — Foundations → How it works → Data → Security → Running it → Hardening. |
 | **Debugging something weird** | 47 symptom-first entries keyed on the error text you actually see in your console, each with the cause and the fix. |
 | **Preparing for interviews** | 74 questions with model answers, plus a quiz attached to every diagram so you find out what you forgot. |
-| **Teaching or onboarding** | Present mode (`P`) walks a group through one view at a time with narration; the whole thing is one folder you can hand someone. |
+| **Teaching or onboarding** | Present mode (`P`) opens a stage: the diagram fills the screen under a moving light while a rail on the right carries the narration, one view at a time; the whole thing is one folder you can hand someone. |
 | **Tired of prose** | 96 glossary terms and 30 shared concept cards you can jump to from anywhere — no more re-scrolling a 40-page article. |
 
 ---
@@ -186,7 +186,7 @@ That is the entire setup. Then:
 | `G` · `T` · `I` | Glossary · Debug by symptom · Interview bank |
 | `?` · `Esc` | Help · close whatever is open |
 | `1` – `6` | Hub tabs |
-| `→` `Space` `←` | Step through present mode |
+| `→` `Space` `←` | Step through Present mode (`Home` / `End` jump to the ends) |
 | `Tab` | Move between nodes — the passport follows |
 
 ---
