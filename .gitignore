@@ -4,6 +4,11 @@ bookstore/target/
 # Tool logs and scratch output
 *.log
 
+# HyperFrames render artifacts — regenerate with:
+#   cd brag-output/composition && npm run render
+brag-output/composition/renders/
+brag-output/composition/node_modules/
+
 # Editor and OS noise
 .idea/
 .vscode/

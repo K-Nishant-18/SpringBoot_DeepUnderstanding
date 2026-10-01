@@ -1,0 +1,716 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>Spring Boot Diagram Atlas ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â brag</title>
+    <script src="assets/js/gsap.min.js"></script>
+    <style>
+      :root {
+        --bg: #020617;
+        --panel: rgba(15, 23, 42, 0.62);
+        --panel-solid: #0b1220;
+        --line: #1e293b;
+        --line-strong: #334155;
+        --text: #ffffff;
+        --muted: #94a3b8;
+        --dim: #7f8ea6;
+        --accent: #34d399;
+        --accent-deep: #059669;
+        --sky: #38bdf8;
+        --violet: #a78bfa;
+        --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+        --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: var(--sans);
+        -webkit-font-smoothing: antialiased;
+      }
+      #root {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background:
+          radial-gradient(900px 520px at 20% 18%, rgba(52, 211, 153, 0.10), transparent 68%),
+          radial-gradient(760px 460px at 84% 8%, rgba(56, 189, 248, 0.07), transparent 70%),
+          var(--bg);
+      }
+      .clip { position: absolute; inset: 0; }
+      .stage-inner {
+        position: absolute;
+        inset: 0;
+        padding: 96px 110px;
+      }
+
+      /* ---------- shared atoms ---------- */
+      .mono { font-family: var(--mono); }
+      .chip {
+        display: inline-block;
+        font-family: var(--mono);
+        font-size: 24px;
+        letter-spacing: 0.02em;
+        color: var(--accent);
+        background: rgba(52, 211, 153, 0.10);
+        border: 1px solid rgba(52, 211, 153, 0.34);
+        border-radius: 10px;
+        padding: 12px 22px;
+      }
+      .word { display: inline-block; white-space: pre; }
+      .eyebrow {
+        font-family: var(--mono);
+        font-size: 21px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--dim);
+      }
+
+      /* ---------- scene 1 ---------- */
+      #s1-inner {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 0 190px;
+      }
+      #s1-chip { margin-bottom: 44px; width: max-content; }
+      .s1-line {
+        font-size: 88px;
+        line-height: 1.14;
+        font-weight: 700;
+        letter-spacing: -0.025em;
+        margin: 0;
+      }
+      #s1-line2 { color: var(--muted); }
+      #s1-rule {
+        margin-top: 54px;
+        height: 4px;
+        width: 560px;
+        background: linear-gradient(90deg, var(--accent), var(--sky));
+        border-radius: 4px;
+        transform-origin: left center;
+      }
+
+      /* ---------- scene 2 : diagram ---------- */
+      #s2-inner { padding: 64px 84px; }
+      .diag-head {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        margin-bottom: 20px;
+      }
+      .diag-title {
+        font-family: var(--mono);
+        font-size: 30px;
+        color: var(--text);
+        letter-spacing: 0.01em;
+      }
+      .diag-sub { font-family: var(--mono); font-size: 21px; color: var(--dim); }
+
+      .stagewrap {
+        position: relative;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 40px;
+        height: 440px;
+      }
+      .stage {
+        position: relative;
+        border: 1.5px dashed var(--line-strong);
+        border-radius: 20px;
+        background: rgba(15, 23, 42, 0.34);
+        padding-top: 62px;
+      }
+      .stage-label {
+        position: absolute;
+        top: 22px;
+        left: 0;
+        right: 0;
+        text-align: center;
+        font-family: var(--mono);
+        font-size: 20px;
+        color: var(--dim);
+        letter-spacing: 0.08em;
+      }
+      .node {
+        width: 78%;
+        margin: 96px auto 0;
+        background: var(--panel);
+        border: 1.5px solid var(--line-strong);
+        border-radius: 16px;
+        padding: 20px 20px 22px;
+        text-align: center;
+      }
+      .node-name {
+        font-family: var(--mono);
+        font-size: 27px;
+        font-weight: 700;
+        color: var(--text);
+      }
+      .node-sub { font-family: var(--mono); font-size: 19px; color: var(--muted); margin-top: 9px; }
+      .node-tag {
+        display: inline-block;
+        margin-top: 13px;
+        font-family: var(--mono);
+        font-size: 17px;
+        letter-spacing: 0.06em;
+        color: var(--accent);
+        background: rgba(52, 211, 153, 0.12);
+        border-radius: 7px;
+        padding: 5px 11px;
+      }
+      .node.is-live { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(52, 211, 153, 0.12); }
+      .node.is-dim { opacity: 0.4; border-style: dashed; }
+      .node.is-trap { border-color: var(--accent); }
+
+      .chev {
+        position: absolute;
+        top: 234px;
+        width: 46px;
+        margin-left: -23px;
+        text-align: center;
+        font-family: var(--mono);
+        font-size: 40px;
+        line-height: 1;
+        color: var(--accent);
+      }
+      .edge-label {
+        position: absolute;
+        top: 340px;
+        width: 220px;
+        margin-left: -110px;
+        text-align: center;
+        font-family: var(--mono);
+        font-size: 18px;
+        color: var(--dim);
+      }
+
+      #s2-counter {
+        position: absolute;
+        right: 84px;
+        top: 584px;
+        text-align: right;
+      }
+      #s2-count {
+        font-family: var(--mono);
+        font-size: 110px;
+        font-weight: 700;
+        line-height: 1.35;
+        color: var(--accent);
+        font-variant-numeric: tabular-nums;
+      }
+      #s2-countlabel {
+        font-family: var(--mono);
+        font-size: 24px;
+        color: var(--muted);
+        margin-top: 6px;
+      }
+      #s2-note {
+        position: absolute;
+        right: 84px;
+        top: 790px;
+        max-width: 660px;
+        text-align: right;
+        font-family: var(--mono);
+        font-size: 23px;
+        line-height: 1.5;
+        color: var(--muted);
+      }
+
+      #s2-passport {
+        position: absolute;
+        left: 84px;
+        top: 584px;
+        width: 1010px;
+        background: rgba(11, 18, 32, 0.97);
+        border: 1px solid var(--line-strong);
+        border-radius: 18px;
+        padding: 20px 28px 18px;
+        box-shadow: 0 34px 70px rgba(0, 0, 0, 0.55);
+      }
+      .pp-top { display: flex; align-items: center; gap: 14px; }
+      .pp-dot {
+        width: 34px; height: 34px; border-radius: 9px;
+        background: rgba(52, 211, 153, 0.14);
+        border: 1px solid rgba(52, 211, 153, 0.4);
+        display: grid; place-items: center;
+        font-family: var(--mono); font-size: 17px; color: var(--accent);
+      }
+      .pp-name { font-family: var(--mono); font-size: 31px; font-weight: 700; }
+      .pp-tag {
+        font-family: var(--mono); font-size: 16px; letter-spacing: 0.1em;
+        color: var(--accent); background: rgba(52, 211, 153, 0.12);
+        border-radius: 6px; padding: 5px 10px; margin-left: auto;
+      }
+      .pp-sum { font-family: var(--mono); font-size: 22px; line-height: 1.5; color: var(--muted); margin-top: 14px; }
+      .pp-list { margin: 12px 0 0; padding: 0; list-style: none; }
+      .pp-list li {
+        font-family: var(--mono); font-size: 20px; line-height: 1.45;
+        color: var(--dim); padding-left: 26px; position: relative; margin-top: 11px;
+      }
+      .pp-list li::before {
+        content: "\25AA"; position: absolute; left: 0; color: var(--accent);
+      }
+      .pp-foot { display: flex; gap: 12px; margin-top: 18px; }
+      .pp-btn {
+        font-family: var(--mono); font-size: 19px;
+        border: 1px solid var(--line-strong); border-radius: 9px;
+        padding: 7px 15px; color: var(--muted); background: rgba(30, 41, 59, 0.5);
+      }
+      .pp-btn.is-accent { color: var(--accent); border-color: rgba(52, 211, 153, 0.45); }
+
+      /* ---------- scene 3 : code viewer ---------- */
+      #s3-inner { display: flex; align-items: center; justify-content: center; padding: 60px 150px; }
+      #s3-panel {
+        width: 100%;
+        background: rgba(11, 18, 32, 0.97);
+        border: 1px solid var(--line-strong);
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 40px 90px rgba(0, 0, 0, 0.6);
+      }
+      #s3-bar {
+        display: flex; align-items: center; gap: 18px;
+        padding: 20px 30px; border-bottom: 1px solid var(--line);
+        background: rgba(15, 23, 42, 0.8);
+      }
+      #s3-file { font-family: var(--mono); font-size: 22px; letter-spacing: 0.1em; text-transform: uppercase; }
+      #s3-meta { font-family: var(--mono); font-size: 19px; color: var(--dim); }
+      #s3-close { margin-left: auto; font-family: var(--mono); font-size: 24px; color: var(--dim); }
+
+      #s3-card {
+        margin: 24px 30px 0;
+        background: rgba(30, 41, 59, 0.42);
+        border: 1px solid var(--line);
+        border-radius: 13px;
+        padding: 18px 22px;
+      }
+      .s3-cardtop { display: flex; align-items: center; gap: 14px; }
+      .s3-badge {
+        font-family: var(--mono); font-size: 15px; letter-spacing: 0.1em;
+        color: var(--accent); background: rgba(52, 211, 153, 0.14);
+        border-radius: 6px; padding: 5px 10px;
+      }
+      .s3-cardname { font-family: var(--mono); font-size: 23px; }
+      .s3-path { font-family: var(--mono); font-size: 17px; color: var(--dim); margin-top: 11px; word-break: break-all; }
+      #s3-explained {
+        font-family: var(--mono); font-size: 18px; color: var(--accent); margin-top: 12px;
+      }
+
+      #s3-struct { margin: 22px 30px 0; }
+      .s3-structlabel { font-family: var(--mono); font-size: 16px; letter-spacing: 0.16em; color: var(--dim); }
+      .s3-chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+      .s3-chip {
+        font-family: var(--mono); font-size: 17px; color: var(--muted);
+        background: rgba(30, 41, 59, 0.6); border: 1px solid var(--line);
+        border-radius: 8px; padding: 8px 12px;
+      }
+      .s3-chip b { color: var(--accent); font-weight: 700; margin-right: 8px; }
+
+      #s3-code {
+        margin: 22px 30px 30px;
+        background: #060b14;
+        border: 1px solid var(--line);
+        border-radius: 13px;
+        padding: 20px 0 22px;
+        overflow: hidden;
+      }
+      .codeline { display: flex; font-family: var(--mono); font-size: 21px; line-height: 1.62; white-space: pre; }
+      .codeline .ln {
+        width: 68px; flex: none; text-align: right; padding-right: 20px;
+        color: #74849c; user-select: none;
+      }
+      .codeline .src { padding-right: 24px; color: #cbd5e1; }
+      .codeline.is-lit { background: rgba(52, 211, 153, 0); box-shadow: inset 4px 0 0 rgba(52, 211, 153, 0); }
+      .k { color: #f472b6; }
+      .t { color: #7dd3fc; }
+      .c { color: #74849c; }
+      .m { color: #fbbf24; }
+
+      /* ---------- scene 4 : outro ---------- */
+      #s4-inner {
+        display: flex; flex-direction: column; justify-content: center;
+        align-items: center; text-align: center; padding: 0 140px;
+      }
+      .stats { display: flex; gap: 26px; margin-bottom: 66px; }
+      .stat {
+        min-width: 232px;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 26px 30px;
+        text-align: left;
+      }
+      .stat b {
+        display: block;
+        font-family: var(--mono);
+        font-size: 54px;
+        line-height: 1;
+        color: var(--accent);
+        font-variant-numeric: tabular-nums;
+      }
+      .stat span {
+        display: block;
+        font-family: var(--mono);
+        font-size: 17px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-top: 14px;
+      }
+      #s4-title {
+        font-size: 92px; font-weight: 800; letter-spacing: -0.03em; margin: 0;
+        background: linear-gradient(100deg, var(--accent), var(--sky) 55%, var(--violet));
+        -webkit-background-clip: text; background-clip: text; color: transparent;
+      }
+      #s4-closer {
+        font-family: var(--mono); font-size: 34px; color: var(--muted); margin-top: 34px;
+      }
+      #s4-closer em { font-style: normal; color: var(--text); }
+      #s4-foot {
+        font-family: var(--mono); font-size: 19px; letter-spacing: 0.18em;
+        text-transform: uppercase; color: var(--dim); margin-top: 54px;
+      }
+      #bpm-glow {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        mix-blend-mode: screen;
+        opacity: 0;
+        background:
+          radial-gradient(1600px 340px at 50% 108%, rgba(52, 211, 153, 0.85), rgba(52, 211, 153, 0) 58%),
+          radial-gradient(1400px 170px at 50% -5%, rgba(56, 189, 248, 0.7), rgba(56, 189, 248, 0) 60%);
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="brag"
+      data-start="0"
+      data-width="1920"
+      data-height="1080"
+      data-duration="21.5"
+    >
+      <!-- ============ SCENE 1 : looks innocent ============ -->
+      <section id="scene1" class="clip" data-start="0" data-duration="5.8" data-track-index="1">
+        <div id="s1-inner" class="stage-inner">
+          <div id="s1-chip" class="chip">GET /books</div>
+          <p class="s1-line" id="s1-line1"><span class="word">returns</span> <span class="word">a</span> <span class="word">list</span> <span class="word">of</span> <span class="word">books</span> <span class="word">-</span></p>
+          <p class="s1-line" id="s1-line2"><span class="word">and</span> <span class="word">looks</span> <span class="word">completely</span> <span class="word">innocent.</span></p>
+          <div id="s1-rule"></div>
+        </div>
+      </section>
+
+      <!-- ============ SCENE 2 : 101 queries ============ -->
+      <section id="scene2" class="clip" data-start="5.8" data-duration="6.85" data-track-index="1">
+        <div id="s2-inner" class="stage-inner">
+          <div class="diag-head">
+            <div class="diag-title" id="s2-heading">The N+1 Problem and the Fetch Fix</div>
+            <div class="diag-sub" id="s2-sub">Spring_Boot_Nplus1 ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â· 7 nodes ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â· 6 relationships</div>
+          </div>
+
+          <div class="stagewrap" id="s2-grid">
+            <div class="stage">
+              <div class="stage-label">01 / Web layer</div>
+              <div class="node" id="n1">
+                <div class="node-name">GET /books</div>
+                <div class="node-sub">returns a list</div>
+                <div class="node-tag">1 HTTP call</div>
+              </div>
+            </div>
+            <div class="stage">
+              <div class="stage-label">02 / Service</div>
+              <div class="node is-trap" id="n2">
+                <div class="node-name">BookService</div>
+                <div class="node-sub">findAll then loops</div>
+                <div class="node-tag">the trap</div>
+              </div>
+            </div>
+            <div class="stage">
+              <div class="stage-label">03 / Fetch plan</div>
+              <div class="node" id="n3">
+                <div class="node-name">for each book</div>
+                <div class="node-sub">1 query + 100 rows</div>
+                <div class="node-tag">getAuthor()</div>
+              </div>
+            </div>
+            <div class="stage">
+              <div class="stage-label">04 / Database</div>
+              <div class="node is-dim" id="n4">
+                <div class="node-name">SELECT author</div>
+                <div class="node-sub">100 more round trips</div>
+                <div class="node-tag">x100</div>
+              </div>
+            </div>
+
+            <div class="chev" id="c1" style="left: 25%">&rsaquo;</div>
+            <div class="chev" id="c2" style="left: 50%">&rsaquo;</div>
+            <div class="chev" id="c3" style="left: 75%">&rsaquo;</div>
+            <div class="edge-label" id="e1" style="left: 25%">findAll()</div>
+            <div class="edge-label" id="e2" style="left: 50%">getAuthor() x100</div>
+            <div class="edge-label" id="e3" style="left: 75%">one per row</div>
+          </div>
+
+          <div id="s2-counter">
+            <div id="s2-count">1</div>
+            <div id="s2-countlabel">queries</div>
+          </div>
+
+          <div id="s2-note">One list query, then one more per row - 101 round trips for 100 books.</div>
+
+          <div id="s2-passport">
+            <div class="pp-top">
+              <div class="pp-dot">&lt;/&gt;</div>
+              <div class="pp-name">BookService</div>
+              <div class="pp-tag">NAIVE</div>
+            </div>
+            <div class="pp-sum">findAll() loads the books, then a getter is called per book while rendering.</div>
+            <ul class="pp-list">
+              <li>repository.findAll() is a single query - that part is fine</li>
+              <li>The problem is the lazy author access that follows</li>
+              <li>The transaction closes before rendering, so lazy loading throws</li>
+            </ul>
+            <div class="pp-foot">
+              <div class="pp-btn is-accent" id="s2-codebtn">code: CatalogFetchService.java</div>
+              <div class="pp-btn">walkthrough</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ SCENE 3 : the real file ============ -->
+      <section id="scene3" class="clip" data-start="12.65" data-duration="5.26" data-track-index="1">
+        <div id="s3-inner" class="stage-inner">
+          <div id="s3-panel">
+            <div id="s3-bar">
+              <div id="s3-file">CatalogFetchService.java</div>
+              <div id="s3-meta">Service ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â· 53 lines</div>
+              <div id="s3-close">&times;</div>
+            </div>
+
+            <div id="s3-card">
+              <div class="s3-cardtop">
+                <div class="s3-badge">SERVICE</div>
+                <div class="s3-cardname">CatalogFetchService.java</div>
+              </div>
+              <div class="s3-path">src/main/java/com/example/bookstore/service/CatalogFetchService.java</div>
+              <div id="s3-explained">4 explained lines in this file</div>
+            </div>
+
+            <div id="s3-struct">
+              <div class="s3-structlabel">STRUCTURE (5)</div>
+              <div class="s3-chips">
+                <div class="s3-chip"><b>15</b>@Service CatalogFetchService</div>
+                <div class="s3-chip"><b>17</b>bookRepository</div>
+                <div class="s3-chip"><b>19</b>queryCounter</div>
+                <div class="s3-chip"><b>27</b>@Transactional listBooksWithJoinFetch()</div>
+                <div class="s3-chip"><b>45</b>toRow(book)</div>
+              </div>
+            </div>
+
+            <div id="s3-code">
+              <div class="codeline"><span class="ln">14</span><span class="src"><span class="m">@Service</span></span></div>
+              <div class="codeline"><span class="ln">15</span><span class="src"><span class="k">public class</span> <span class="t">CatalogFetchService</span> {</span></div>
+              <div class="codeline"><span class="ln">16</span><span class="src"> </span></div>
+              <div class="codeline"><span class="ln">17</span><span class="src">    <span class="k">private final</span> <span class="t">BookRepository</span> bookRepository;</span></div>
+              <div class="codeline"><span class="ln">18</span><span class="src"> </span></div>
+              <div class="codeline"><span class="ln">19</span><span class="src">    <span class="k">private final</span> <span class="t">QueryCounter</span> queryCounter;</span></div>
+              <div class="codeline"><span class="ln">20</span><span class="src"> </span></div>
+              <div class="codeline"><span class="ln">21</span><span class="src">    <span class="k">public</span> <span class="t">CatalogFetchService</span>(BookRepository bookRepository, QueryCounter queryCounter) {</span></div>
+              <div class="codeline"><span class="ln">22</span><span class="src">        <span class="k">this</span>.bookRepository = bookRepository;</span></div>
+              <div class="codeline"><span class="ln">23</span><span class="src">        <span class="k">this</span>.queryCounter = queryCounter;</span></div>
+              <div class="codeline"><span class="ln">24</span><span class="src">    }</span></div>
+              <div class="codeline"><span class="ln">25</span><span class="src"> </span></div>
+              <div class="codeline is-lit" id="s3-lit1"><span class="ln">26</span><span class="src">    <span class="m">@Transactional</span>(readOnly = <span class="k">true</span>)</span></div>
+              <div class="codeline is-lit" id="s3-lit2"><span class="ln">27</span><span class="src">    <span class="k">public</span> <span class="t">CatalogReadReport</span> listBooksWithJoinFetch() {</span></div>
+              <div class="codeline is-lit" id="s3-lit3"><span class="ln">28</span><span class="src">        queryCounter.reset();</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ SCENE 4 : nothing to install ============ -->
+      <section id="scene4" class="clip" data-start="17.91" data-duration="3.59" data-track-index="1">
+        <div id="s4-inner" class="stage-inner">
+          <div class="stats" id="s4-stats">
+            <div class="stat"><b>21</b><span>diagrams</span></div>
+            <div class="stat"><b>196</b><span>nodes</span></div>
+            <div class="stat"><b>61</b><span>guided views</span></div>
+            <div class="stat"><b>128</b><span>quiz items</span></div>
+          </div>
+          <h1 id="s4-title">Spring Boot Diagram Atlas</h1>
+          <div id="s4-closer">Open <em>index.html</em>. Nothing to install.</div>
+          <div id="s4-foot">21 diagrams ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â· 6 tracks ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â· 1 folder</div>
+        </div>
+      </section>
+
+      <audio
+        id="bgm"
+        src="assets/music/happy-beats-business-moves-vol-11-by-ende-dot-app.mp3"
+        data-start="0"
+        data-duration="21.5"
+        data-track-index="10"
+        data-volume="0.9"
+        data-automation='{"version":1,"lanes":[{"target":"volume","points":[{"t":0,"v":0},{"t":0.7,"v":0.9},{"t":20.2,"v":0.9},{"t":21.5,"v":0}]}]}'
+      ></audio>
+      <div id="bpm-glow" aria-hidden="true"></div>
+    </div>
+
+    <script>
+      const tl = gsap.timeline({ paused: true });
+
+      /* ---------- SCENE 1 : the innocent line (0 - 5.80) ---------- */
+      tl.fromTo("#s1-chip", { y: 26, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "power3.out" }, 0.4);
+      // beat-locked: headline starts on the 1.60s strong cue
+      tl.fromTo(
+        "#s1-line1 .word",
+        { yPercent: 118, opacity: 0 },
+        { yPercent: 0, opacity: 1, duration: 0.5, stagger: 0.14, ease: "power3.out" },
+        1.6
+      );
+      tl.fromTo(
+        "#s1-line2 .word",
+        { yPercent: 118, opacity: 0 },
+        { yPercent: 0, opacity: 1, duration: 0.5, stagger: 0.14, ease: "power3.out" },
+        2.35
+      );
+      // beat-locked: 3.70s strong cue ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â the accent rule wipes in
+      tl.fromTo("#s1-rule", { scaleX: 0 }, { scaleX: 1, duration: 0.6, ease: "power3.out" }, 3.7);
+
+      /* ---------- SCENE 2 : the diagram (5.80 - 12.65) ---------- */
+      // beat-locked: 5.80s strong cue ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â diagram reveal
+      tl.fromTo("#s2-heading", { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.45, ease: "power3.out" }, 5.8);
+      tl.fromTo("#s2-sub", { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.45, ease: "power3.out" }, 5.86);
+      tl.fromTo(
+        "#s2-grid .stage",
+        { y: 34, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.5, stagger: 0.09, ease: "power3.out" },
+        5.9
+      );
+      tl.fromTo(
+        "#s2-grid .node",
+        { scale: 0.9, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.45, stagger: 0.08, ease: "back.out(1.6)" },
+        6.12
+      );
+      tl.fromTo(["#c1", "#c2", "#c3"], { opacity: 0 }, { opacity: 1, duration: 0.35, stagger: 0.1 }, 6.3);
+      tl.fromTo(["#e1", "#e2", "#e3"], { opacity: 0 }, { opacity: 1, duration: 0.35, stagger: 0.1 }, 6.42);
+
+      // beat-locked: 6.34s strong cue ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â the counter lands and counts
+      tl.fromTo("#s2-counter", { x: 60, opacity: 0 }, { x: 0, opacity: 1, duration: 0.5, ease: "power3.out" }, 6.34);
+      const count = { v: 1 };
+      tl.to(
+        count,
+        {
+          v: 101,
+          duration: 1.5,
+          ease: "power2.out",
+          onUpdate: function () {
+            document.getElementById("s2-count").textContent = Math.round(count.v);
+          },
+        },
+        6.5
+      );
+      tl.fromTo("#s2-note", { y: 18, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "power3.out" }, 7.3);
+
+      // the passport is the signature moment
+      tl.fromTo(
+        "#s2-passport",
+        { x: -46, y: 26, opacity: 0 },
+        { x: 0, y: 0, opacity: 1, duration: 0.55, ease: "power3.out" },
+        6.95
+      );
+      tl.fromTo(
+        "#s2-passport .pp-list li",
+        { y: 14, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.4, stagger: 0.16, ease: "power2.out" },
+        7.55
+      );
+      tl.fromTo("#s2-passport .pp-foot", { y: 14, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4 }, 8.3);
+      // beat-grid: code chip pulses on the 8.96s beat
+      tl.to("#s2-codebtn", { scale: 1.07, duration: 0.22, ease: "power2.out" }, 8.96);
+      tl.to("#s2-codebtn", { scale: 1, duration: 0.3, ease: "power2.inOut", overwrite: "auto" }, 9.19);
+      // beat-grid: node 3 pulses on the 9.50s beat so the eye travels
+      tl.fromTo(
+        "#n3",
+        { boxShadow: "0 0 0 4px rgba(52,211,153,0.12)" },
+        { boxShadow: "0 0 0 9px rgba(52,211,153,0.22)", duration: 0.3, ease: "power2.out" },
+        9.5
+      );
+      tl.to("#n3", { boxShadow: "0 0 0 4px rgba(52,211,153,0.12)", duration: 0.4, ease: "power2.inOut" }, 9.8);
+
+      /* ---------- SCENE 3 : the real file (12.65 - 17.91) ---------- */
+      // beat-locked: 12.65s strong cue ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â code viewer opens
+      tl.fromTo("#s3-panel", { y: 42, scale: 0.985, opacity: 0 }, { y: 0, scale: 1, opacity: 1, duration: 0.5, ease: "power3.out" }, 12.65);
+      tl.fromTo("#s3-card", { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.45, ease: "power3.out" }, 13.05);
+      // beat-grid: structure chips pop in fast, then the set holds
+      tl.fromTo(
+        "#s3-struct .s3-chip",
+        { y: 12, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.3, stagger: 0.12, ease: "power2.out" },
+        13.18
+      );
+      tl.fromTo(".s3-structlabel", { opacity: 0 }, { opacity: 1, duration: 0.3 }, 13.1);
+      // code lines arrive as a block, not one per beat
+      tl.fromTo("#s3-code .codeline", { x: -16, opacity: 0 }, { x: 0, opacity: 1, duration: 0.34, stagger: 0.05, ease: "power2.out" }, 14.0);
+      // beat-locked: 15.81s ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â the explained line lights
+      tl.fromTo("#s3-explained", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, 15.81);
+      tl.fromTo(
+        "#s3-code .is-lit",
+        { backgroundColor: "rgba(52,211,153,0)", boxShadow: "inset 4px 0 0 rgba(52,211,153,0)" },
+        {
+          backgroundColor: "rgba(52,211,153,0.10)",
+          boxShadow: "inset 4px 0 0 #34d399",
+          duration: 0.5,
+          stagger: 0.1,
+          ease: "power2.out",
+        },
+        15.81
+      );
+
+      /* ---------- SCENE 4 : nothing to install (17.91 - 21.5) ---------- */
+      // beat-locked: 17.91s strong cue ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â stat row lands as a set
+      tl.fromTo(
+        "#s4-stats .stat",
+        { y: 30, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.42, stagger: 0.12, ease: "power3.out" },
+        17.95
+      );
+      tl.fromTo("#s4-title", { y: 34, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "power3.out" }, 18.7);
+      tl.fromTo("#s4-closer", { y: 22, opacity: 0 }, { y: 0, opacity: 1, duration: 0.45, ease: "power3.out" }, 19.25);
+      tl.fromTo("#s4-foot", { opacity: 0 }, { opacity: 1, duration: 0.5 }, 19.85);
+
+      /* audio-reactive: the top/bottom bloom follows a precomputed RMS lane of the music */
+      const Rms = [0.857,0.798,0.687,0.604,0.557,0.528,0.527,0.562,0.61,0.62,0.611,0.608,0.594,0.56,0.528,0.636,0.814,0.77,0.611,0.532,0.505,0.495,0.486,0.487,0.5,0.503,0.488,0.47,0.458,0.452,0.486,0.642,0.79,0.733,0.615,0.557,0.508,0.474,0.462,0.463,0.464,0.456,0.45,0.47,0.502,0.488,0.535,0.714,0.799,0.709,0.589,0.5,0.444,0.419,0.438,0.527,0.61,0.616,0.592,0.557,0.492,0.415,0.488,0.712,0.792,0.698,0.599,0.543,0.526,0.519,0.538,0.577,0.571,0.537,0.505,0.473,0.455,0.44,0.541,0.746,0.768,0.622,0.522,0.494,0.491,0.49,0.481,0.455,0.435,0.43,0.431,0.439,0.441,0.441,0.562,0.756,0.765,0.653,0.561,0.493,0.465,0.45,0.444,0.442,0.415,0.386,0.402,0.441,0.426,0.453,0.646,0.796,0.728,0.59,0.471,0.388,0.36,0.374,0.457,0.545,0.561,0.532,0.497,0.455,0.396,0.467,0.682,0.765,0.696,0.622,0.572,0.555,0.547,0.555,0.6,0.626,0.611,0.593,0.577,0.548,0.514,0.588,0.734,0.729,0.622,0.561,0.546,0.552,0.563,0.583,0.579,0.531,0.486,0.471,0.477,0.485,0.47,0.56,0.749,0.764,0.663,0.599,0.532,0.493,0.481,0.47,0.479,0.477,0.443,0.436,0.466,0.462,0.462,0.613,0.805,0.771,0.622,0.519,0.432,0.397,0.411,0.466,0.541,0.566,0.548,0.525,0.488,0.415,0.439,0.648,0.783,0.717,0.62,0.558,0.531,0.523,0.531,0.579,0.623,0.63,0.609,0.561,0.515,0.491,0.57,0.746,0.763,0.616,0.534,0.515,0.482,0.452,0.458,0.491,0.504,0.496,0.491,0.506,0.522,0.504,0.571,0.743,0.767,0.634,0.544,0.486,0.423,0.392,0.396,0.435,0.469,0.463,0.468,0.502,0.525,0.511,0.605,0.786,0.787,0.642,0.535,0.484,0.459,0.447,0.46,0.497,0.503,0.501,0.483,0.416,0.37,0.407,0.594,0.787,0.765,0.638,0.569,0.546,0.54,0.551,0.586,0.614,0.601,0.58,0.573,0.557,0.516,0.541,0.713,0.797,0.669,0.555,0.523,0.509,0.496,0.481,0.492,0.517,0.523,0.51,0.494,0.48,0.464,0.541,0.723,0.791,0.706,0.607,0.54,0.502,0.472,0.453,0.461,0.471,0.464,0.463,0.499,0.535,0.541,0.629,0.773,0.768,0.662,0.577,0.499,0.447,0.422,0.455,0.556,0.614,0.594,0.555,0.504,0.442,0.404,0.53,0.752,0.768,0.656,0.595,0.564,0.555,0.559,0.585,0.618,0.602,0.561,0.53,0.498,0.471,0.489,0.633,0.763,0.695,0.566,0.502,0.496,0.499,0.485,0.478,0.468,0.453,0.44,0.439,0.456,0.465,0.529,0.701,0.795,0.721,0.628,0.546,0.474,0.449,0.448,0.461,0.457,0.414,0.388,0.416,0.447,0.419,0.495,0.716,0.777,0.658,0.545,0.459,0.404,0.379,0.406,0.499,0.567,0.554,0.525,0.493,0.433,0.38,0.487,0.715,0.772,0.687,0.618,0.575,0.549,0.54,0.576,0.631,0.636,0.614,0.59,0.556,0.533,0.529,0.618,0.736,0.699,0.591,0.546,0.544,0.535,0.525,0.519,0.499,0.474,0.457,0.455,0.459,0.457,0.509,0.669,0.785,0.734,0.641,0.581,0.537,0.512,0.499,0.489,0.477,0.458,0.439,0.454,0.486,0.47,0.528,0.726,0.797,0.673,0.555,0.495,0.442,0.4,0.414,0.5,0.577,0.586,0.582,0.555,0.472,0.391,0.373,0.429,0.49,0.507,0.514,0.535,0.546,0.564,0.614,0.652,0.664,0.654,0.606,0.556,0.546,0.551,0.541,0.525,0.505,0.482,0.483,0.511,0.515,0.503,0.498,0.487,0.477,0.459,0.449,0.474,0.496,0.508,0.53,0.55,0.536,0.503,0.47,0.415,0.354,0.298,0.284,0.287,0.253,0.223,0.275,0.374,0.385,0.346,0.352,0.364,0.348,0.318,0.305,0.32,0.325,0.32,0.336,0.362,0.375,0.378,0.373,0.369,0.364,0.479,0.7,0.737,0.649,0.622,0.606,0.586,0.575,0.591,0.643,0.678,0.666,0.641,0.607,0.572,0.548,0.628,0.762,0.72,0.602,0.583,0.616,0.637,0.615,0.579,0.568,0.567,0.561,0.557,0.568,0.579,0.587,0.679,0.79,0.757,0.656,0.582,0.541,0.535,0.519,0.504,0.519,0.535,0.54,0.577,0.639,0.645,0.647,0.729,0.764,0.673,0.573,0.525,0.509,0.512,0.512,0.566,0.678,0.714,0.689,0.679,0.664,0.633,0.671,0.772,0.753,0.639,0.564,0.538,0.553,0.572,0.577,0.617,0.661,0.63,0.561,0.527,0.52,0.517,0.607,0.749,0.732,0.607,0.549,0.583,0.628,0.632,0.608,0.582,0.567,0.548,0.531,0.525,0.517,0.509,0.606,0.763,0.761,0.656,0.59,0.559,0.565,0.573,0.552,0.532,0.533,0.531,0.556,0.621,0.635,0.604,0.669,0.779,0.736,0.609,0.547,0.53,0.528,0.525,0.56,0.629,0.649,0.627,0.606,0.602,0.599,0.639,0.742,0.736,0.629,0.566,0.538,0.526,0.531,0.558,0.624,0.683,0.69,0.663,0.64,0.627];
+      const glowEl = document.getElementById("bpm-glow");
+      const drive = { t: 0 };
+      tl.to(
+        drive,
+        {
+          t: 21.5,
+          duration: 21.5,
+          ease: "none",
+          modifiers: {
+            t: function (v) {
+              const x = Math.max(0, Math.min(21.5, parseFloat(v)));
+              const p = x * 30;
+              const i = Math.floor(p);
+              const a = Rms[Math.min(i, Rms.length - 1)];
+              const b = Rms[Math.min(i + 1, Rms.length - 1)];
+              glowEl.style.opacity = (0.07 + 0.5 * (a + (b - a) * (p - i))).toFixed(4);
+              return v;
+            },
+          },
+        },
+        0
+      );
+
+      window.__timelines["brag"] = tl;
+
+    </script>
+  </body>
+</html>
