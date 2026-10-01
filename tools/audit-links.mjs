@@ -113,7 +113,7 @@ for (const claim of ['verify.cmd', '.stubs']) {
   }
 }
 
-/* The Hinglish guide is hand-written prose full of links into the rest of the
+/* The guide is hand-written prose full of links into the rest of the
  * resource, so it gets resolved the same way diagram links are - including the
  * fragments, because index.html addresses its panes by data-pane rather than id. */
 const guideFile = `${DIR}/guide.html`;

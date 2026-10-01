@@ -41,7 +41,7 @@ const HUB = `
   o.quizGrid=document.querySelectorAll('#practice-quiz .grid .card').length;
   o.conceptCards=document.querySelectorAll('#conceptlist .card').length;
   o.docScrollX=document.documentElement.scrollWidth-document.documentElement.clientWidth;
-  o.guideHomeCard=[...document.querySelectorAll('#home-cards .card')].some(c=>/guide\.html/.test(c.getAttribute('onclick')||'')||/Hinglish|padho/i.test(c.textContent));
+  o.guideHomeCard=[...document.querySelectorAll('#home-cards .card')].some(c=>/guide\.html/.test(c.getAttribute('onclick')||'')||/first time|start with this/i.test(c.textContent));
   o.guideFooter=!!document.querySelector('.foot a[href="guide.html"]');
 
   // tab navigation
@@ -100,7 +100,7 @@ const HUB = `
   window.SBKit.open('help'); await sleep(200);
   o.helpOpen=document.getElementById('sbkit').getAttribute('data-sb-view')==='help';
   o.helpShortcuts=document.querySelectorAll('#sbkit .sb-table tbody tr').length;
-  o.helpGuideLink=[...document.querySelectorAll('#sbkit button')].some(b=>/Hinglish guide/.test(b.textContent));
+  o.helpGuideLink=[...document.querySelectorAll('#sbkit button')].some(b=>/Open the guide/.test(b.textContent));
   window.SBKit.close(); await sleep(100);
 
   window.SBKit.open('search'); await sleep(150);
@@ -236,7 +236,7 @@ try {
     else out.push('  RESULT PASS');
   }
 
-  /* The Hinglish guide is a standalone page, not a hub pane, so it gets its own
+  /* The guide is a standalone page, not a hub pane, so it gets its own
    * probe: every section anchor must resolve, the scroll-spy nav must point at
    * real ids, and the page must stay free of horizontal overflow. */
   await go('guide.html');
