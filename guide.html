@@ -6,148 +6,142 @@
 <title>Kaise Use Karein - Spring Boot Diagram Atlas ka Complete Guide (Hinglish)</title>
 <meta name="description" content="Is platform ko 100% kaise istemal karein: navigation, har functionality, keyboard shortcuts, best practices aur 30-din ka study plan - sab Hinglish mein.">
 <link rel="stylesheet" href="sbkit.css">
+<link rel="stylesheet" href="atlas.css">
 <style>
-  :root {
-    --bg: #020617; --panel: rgba(15,23,42,.5); --panel-border: #1e293b;
-    --text: #ffffff; --text-muted: #94a3b8; --text-dim: #64748b;
-    --accent: #34d399; --amber: #fbbf24; --sky: #38bdf8; --violet: #a78bfa; --rose: #fb7185;
-    --toolbar-bg: rgba(15,23,42,.88);
-  }
-  [data-theme="light"] {
-    --bg: #f8fafc; --panel: rgba(255,255,255,.75); --panel-border: #cbd5e1;
-    --text: #0f172a; --text-muted: #475569; --text-dim: #64748b;
-    --accent: #059669; --amber: #b45309; --sky: #0369a1; --violet: #7c3aed; --rose: #e11d48;
-    --toolbar-bg: rgba(255,255,255,.92);
-  }
-  html[data-theme="dark"] { background: #020617; color-scheme: dark; }
-  html[data-theme="light"] { background: #f8fafc; color-scheme: light; }
-  * { box-sizing: border-box; }
-  body {
-    margin: 0; background: var(--bg); color: var(--text);
-    font: 15.5px/1.62 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-  }
-  a { color: var(--accent); text-decoration: none; }
-  a:hover { text-decoration: underline; }
-  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 22px; }
-  code, kbd, .mono { font-family: var(--sb-mono, ui-monospace, "Cascadia Mono", Consolas, monospace); }
+  :root { --shell: 1040px; }
 
-  header.top {
-    position: sticky; top: 0; z-index: 40;
-    background: color-mix(in srgb, var(--bg) 86%, transparent);
-    backdrop-filter: blur(12px); border-bottom: 1px solid var(--panel-border);
-  }
-  .top-in { display: flex; align-items: center; gap: 14px; padding: 11px 0; flex-wrap: wrap; }
-  .brand { display: flex; align-items: baseline; gap: 9px; margin: 0; font-size: 16px; font-weight: 800; }
-  .brand span { font: 600 10px/1 var(--sb-mono, monospace); text-transform: uppercase; letter-spacing: .1em; color: var(--accent); border: 1px solid currentColor; border-radius: 999px; padding: 4px 7px; }
-  .spacer { flex: 1; }
-  .sb-btn { padding: 7px 12px; border-radius: 8px; font-size: 12.5px; font-weight: 650; cursor: pointer; background: var(--panel); border: 1px solid var(--panel-border); color: var(--text); }
-  .sb-btn:hover { border-color: var(--accent); }
-  .sb-btn.is-primary { background: color-mix(in srgb, var(--accent) 18%, transparent); border-color: var(--accent); color: var(--text); }
-
-  /* ---------- hero ---------- */
-  .hero { position: relative; padding: 56px 0 34px; overflow: hidden; }
-  .hero::before {
-    content: ""; position: absolute; inset: -40% -10% auto; height: 460px; pointer-events: none;
-    background:
-      radial-gradient(600px 240px at 18% 30%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 70%),
-      radial-gradient(520px 220px at 82% 10%, color-mix(in srgb, var(--sky) 16%, transparent), transparent 70%),
-      radial-gradient(420px 200px at 55% 75%, color-mix(in srgb, var(--violet) 14%, transparent), transparent 70%);
-    filter: blur(6px);
-  }
-  .hero > * { position: relative; }
-  .eyebrow { font: 700 11px/1 var(--sb-mono, monospace); text-transform: uppercase; letter-spacing: .18em; color: var(--accent); }
-  h1 { font-size: clamp(30px, 5.4vw, 46px); line-height: 1.1; letter-spacing: -.025em; margin: 14px 0 14px; font-weight: 850; }
-  h1 em { font-style: normal; background: linear-gradient(100deg, var(--accent), var(--sky) 55%, var(--violet)); -webkit-background-clip: text; background-clip: text; color: transparent; }
-  .lead { font-size: 16.5px; color: var(--text-muted); max-width: 76ch; margin: 0 0 22px; }
-  .cta { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 26px; }
-
-  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(112px, 1fr)); gap: 9px; }
-  .stat { padding: 12px 13px; border-radius: 12px; background: var(--panel); border: 1px solid var(--panel-border); }
-  .stat b { display: block; font-size: 22px; font-weight: 850; letter-spacing: -.02em; color: var(--accent); font-variant-numeric: tabular-nums; }
-  .stat span { font-size: 10.5px; color: var(--text-muted); text-transform: uppercase; letter-spacing: .07em; font-weight: 650; }
+  /* ---------- masthead ---------- */
+  .hero { padding: 58px 0 34px; }
+  .hero h1 { font-size: clamp(32px, 5.6vw, 54px); line-height: 1.06; letter-spacing: -.022em; margin: 16px 0 18px; }
+  .hero h1 em { font-style: italic; color: var(--accent-ink); }
+  .hero .lead { font-size: 16.5px; line-height: 1.65; max-width: 76ch; margin: 0 0 24px; }
+  .cta { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 30px; }
 
   /* ---------- pill nav ---------- */
-  .pillnav { position: sticky; top: 53px; z-index: 30; padding: 10px 0; background: color-mix(in srgb, var(--bg) 90%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--panel-border); }
-  .pillnav .in { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+  .pillnav {
+    position: sticky; top: 54px; z-index: 30;
+    background: color-mix(in srgb, var(--bg) 93%, transparent);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--rule);
+  }
+  .pillnav .in { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; }
   .pillnav .in::-webkit-scrollbar { display: none; }
-  .pillnav a { flex: none; padding: 6px 11px; border-radius: 999px; font-size: 12.5px; font-weight: 650; color: var(--text-muted); border: 1px solid transparent; white-space: nowrap; }
-  .pillnav a:hover { color: var(--text); background: var(--panel); text-decoration: none; }
-  .pillnav a[data-on] { color: var(--text); background: color-mix(in srgb, var(--accent) 16%, transparent); border-color: var(--accent); }
+  .pillnav a {
+    flex: none; padding: 13px 11px 12px;
+    border-bottom: 2px solid transparent;
+    font: 600 10.5px/1 var(--mono);
+    text-transform: uppercase; letter-spacing: .1em;
+    color: var(--text-muted); white-space: nowrap;
+  }
+  .pillnav a:hover { color: var(--text); text-decoration: none; }
+  .pillnav a[data-on] { color: var(--text); border-bottom-color: var(--accent); }
 
   /* ---------- sections ---------- */
-  section.sec { padding: 42px 0 6px; scroll-margin-top: 108px; }
-  .sechead { display: flex; align-items: center; gap: 13px; margin-bottom: 8px; }
-  .num { flex: none; font: 800 12px/1 var(--sb-mono, monospace); color: var(--accent); border: 1.5px solid var(--accent); border-radius: 9px; padding: 7px 9px; letter-spacing: .04em; }
-  h2 { font-size: clamp(21px, 3vw, 26px); font-weight: 820; letter-spacing: -.02em; margin: 0; }
-  .sub { color: var(--text-muted); font-size: 14.5px; margin: 0 0 20px; max-width: 80ch; }
+  section.sec { padding: 44px 0 4px; margin-top: 40px; border-top: 1px solid var(--rule); scroll-margin-top: 108px; }
+  main.wrap > section.sec:first-of-type { margin-top: 0; padding-top: 34px; border-top: 0; }
+  .sechead { display: flex; align-items: center; gap: 14px; margin-bottom: 10px; }
+  h2 { font-size: clamp(22px, 3vw, 27px); }
+  .sub { color: var(--text-muted); font-size: 14.5px; line-height: 1.65; margin: 0 0 22px; max-width: 84ch; }
 
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(288px, 1fr)); gap: 11px; }
-  .card { padding: 15px 16px; border-radius: 14px; background: var(--panel); border: 1px solid var(--panel-border); }
-  .card h3 { margin: 0 0 6px; font-size: 14.5px; font-weight: 750; letter-spacing: -.01em; display: flex; align-items: center; gap: 8px; }
-  .card p { margin: 0; font-size: 13.5px; color: var(--text-muted); line-height: 1.56; }
-  .card p + p { margin-top: 7px; }
-  .dot { flex: none; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
-  .dot.a { background: var(--amber); } .dot.s { background: var(--sky); }
-  .dot.v { background: var(--violet); } .dot.r { background: var(--rose); }
+  /* ---------- cards ---------- */
+  .card h3 { display: flex; align-items: center; gap: 9px; }
+  .dot { flex: none; width: 7px; height: 7px; border-radius: 1px; background: var(--text-dim); }
 
-  kbd { display: inline-block; font: 650 11.5px/1.35 var(--sb-mono, monospace); padding: 3px 6px; border-radius: 6px; background: color-mix(in srgb, var(--text-dim) 16%, transparent); border: 1px solid var(--panel-border); border-bottom-width: 2px; color: var(--text); white-space: nowrap; }
-  .inline-code { font: 600 12.5px/1.4 var(--sb-mono, monospace); padding: 2px 6px; border-radius: 6px; background: color-mix(in srgb, var(--sky) 14%, transparent); color: var(--sky); white-space: nowrap; }
+  .inline-code {
+    font: 600 12.5px/1.4 var(--mono);
+    padding: 2px 6px; border-radius: var(--r-sm);
+    background: var(--surface-2); border: 1px solid var(--rule);
+    color: var(--text); white-space: nowrap;
+  }
 
   /* ordered steps */
-  .steps { list-style: none; counter-reset: st; padding: 0; margin: 0; display: grid; gap: 10px; }
-  .steps li { counter-increment: st; position: relative; padding: 14px 16px 14px 54px; border-radius: 13px; background: var(--panel); border: 1px solid var(--panel-border); }
-  .steps li::before {
-    content: counter(st); position: absolute; left: 14px; top: 13px;
-    width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center;
-    font: 800 12.5px/1 var(--sb-mono, monospace); color: #020617;
-    background: linear-gradient(140deg, var(--accent), var(--sky));
+  .steps { list-style: none; counter-reset: st; padding: 0; margin: 0; display: grid; gap: 12px; }
+  .steps li {
+    counter-increment: st; position: relative;
+    padding: 16px 18px 17px 60px;
+    background: var(--surface); border: 1px solid var(--rule); border-radius: var(--r);
   }
-  .steps li b { display: block; font-size: 14.5px; margin-bottom: 3px; }
-  .steps li span { display: block; font-size: 13.5px; color: var(--text-muted); line-height: 1.55; }
-
-  /* callouts */
-  .note { padding: 13px 16px; border-radius: 12px; background: var(--panel); border: 1px solid var(--panel-border); border-left: 3px solid var(--accent); font-size: 13.5px; color: var(--text-muted); margin-top: 12px; }
-  .note b { color: var(--text); }
-  .note.warn { border-left-color: var(--amber); }
-  .note.warn b { color: var(--amber); }
-  .note.tip { border-left-color: var(--sky); }
-  .note.tip b { color: var(--sky); }
+  .steps li::before {
+    content: counter(st, decimal-leading-zero);
+    position: absolute; left: 17px; top: 16px; padding: 4px 5px;
+    font: 700 12px/1.2 var(--mono); color: var(--accent-ink);
+    border: 1px solid color-mix(in srgb, var(--accent-ink) 50%, transparent);
+    border-radius: var(--r-sm);
+  }
+  .steps li b { display: block; font-size: 14.5px; font-weight: 600; margin-bottom: 5px; }
+  .steps li span { display: block; font-size: 13.5px; color: var(--text-muted); line-height: 1.6; }
 
   /* tables */
-  table.tbl { width: 100%; border-collapse: collapse; font-size: 13.5px; background: var(--panel); border: 1px solid var(--panel-border); border-radius: 13px; overflow: hidden; }
-  table.tbl th, table.tbl td { text-align: left; padding: 10px 13px; border-bottom: 1px solid var(--panel-border); vertical-align: top; }
-  table.tbl th { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--text-dim); font-weight: 750; background: color-mix(in srgb, var(--text-dim) 8%, transparent); }
-  table.tbl tr:last-child td { border-bottom: 0; }
-  table.tbl td.k { width: 190px; white-space: nowrap; }
+  table.tbl {
+    width: 100%; border-collapse: collapse; font-size: 13.5px;
+    border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
+  }
+  table.tbl th, table.tbl td { text-align: left; padding: 11px 12px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  table.tbl thead th {
+    font: 600 10px/1.3 var(--mono);
+    text-transform: uppercase; letter-spacing: .12em;
+    color: var(--text-dim); padding-top: 9px; padding-bottom: 9px;
+  }
+  table.tbl tbody tr:last-child td { border-bottom: 0; }
+  table.tbl tbody tr:hover td { background: var(--surface); }
+  table.tbl td.k { width: 210px; white-space: nowrap; font-family: var(--mono); font-size: 12.5px; }
   table.tbl td.d { color: var(--text-muted); }
 
+  .tbl-head { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 12px; }
+  .tbl-head h3 { font: 600 12px/1 var(--mono); text-transform: uppercase; letter-spacing: .14em; color: var(--text-muted); }
+
   /* route / timeline */
-  .route { display: grid; gap: 10px; }
-  .stop { display: grid; grid-template-columns: 62px 1fr; gap: 14px; align-items: start; }
-  .stop .day { font: 800 11.5px/1.4 var(--sb-mono, monospace); color: var(--accent); text-align: right; padding-top: 13px; }
-  .stop .body { padding: 13px 16px; border-radius: 13px; background: var(--panel); border: 1px solid var(--panel-border); border-left: 3px solid var(--accent); }
-  .stop .body b { display: block; font-size: 14.5px; margin-bottom: 4px; }
-  .stop .body span { font-size: 13.5px; color: var(--text-muted); line-height: 1.55; }
-  .stop:nth-child(3n+2) .body { border-left-color: var(--sky); } .stop:nth-child(3n+2) .day { color: var(--sky); }
-  .stop:nth-child(3n) .body { border-left-color: var(--violet); } .stop:nth-child(3n) .day { color: var(--violet); }
-  @media (max-width: 620px) { .stop { grid-template-columns: 1fr; gap: 5px; } .stop .day { text-align: left; padding-top: 0; } }
+  .route { display: grid; }
+  .stop { display: grid; grid-template-columns: 76px 1fr; gap: 16px; align-items: start; }
+  .stop .day { font: 700 11.5px/1.4 var(--mono); letter-spacing: .06em; color: var(--accent-ink); text-align: right; padding-top: 16px; }
+  .stop .body {
+    padding: 15px 18px 16px; margin-bottom: 12px;
+    background: var(--surface); border: 1px solid var(--rule); border-radius: var(--r);
+  }
+  .stop .body b { display: block; font-size: 14.5px; font-weight: 600; margin-bottom: 5px; }
+  .stop .body span { font-size: 13.5px; color: var(--text-muted); line-height: 1.6; }
+  @media (max-width: 620px) {
+    .stop { grid-template-columns: 1fr; gap: 4px; }
+    .stop .day { text-align: left; padding-top: 0; }
+    table.tbl th, table.tbl td { padding: 9px 8px; }
+    table.tbl td.k { width: auto; white-space: normal; }
+    table.tbl .inline-code { white-space: normal; overflow-wrap: anywhere; }
+  }
 
   /* map of the hub */
-  .map { display: grid; grid-template-columns: repeat(auto-fill, minmax(168px, 1fr)); gap: 9px; }
-  .map .m { padding: 12px 13px; border-radius: 12px; background: var(--panel); border: 1px solid var(--panel-border); }
-  .map .m b { display: block; font-size: 13.5px; margin-bottom: 3px; }
-  .map .m span { font-size: 12.5px; color: var(--text-muted); line-height: 1.5; }
-  .map .m kbd { margin-bottom: 7px; }
+  .map { display: grid; grid-template-columns: repeat(auto-fill, minmax(176px, 1fr)); column-gap: 26px; }
+  .map .m { padding: 14px 14px 16px; border-top: 1px solid var(--rule); }
+  .map .m kbd { margin-bottom: 9px; }
+  .map .m b { display: block; font-size: 14.5px; font-weight: 600; margin-bottom: 5px; }
+  .map .m span { display: block; font-size: 12.5px; color: var(--text-muted); line-height: 1.55; }
 
-  .split { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; }
-  footer.foot { margin-top: 48px; border-top: 1px solid var(--panel-border); padding: 24px 0 46px; color: var(--text-dim); font-size: 13px; }
-  footer.foot a { color: var(--text-muted); }
-  footer.foot .fl { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 8px; }
-  .hr { height: 1px; background: var(--panel-border); margin: 30px 0 0; }
+  .split { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); column-gap: 26px; }
+
+  footer.foot { margin-top: 46px; }
+  footer.foot .fl { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 10px; }
+  footer.foot .fl a { font: 600 11px/1 var(--mono); text-transform: uppercase; letter-spacing: .1em; }
+
+  /* ---------- reading aids ---------- */
+  #readbar { position: fixed; inset: 0 0 auto 0; z-index: 60; height: 2px; background: transparent; pointer-events: none; }
+  #readbar i { display: block; height: 100%; background: var(--accent); transform: scaleX(0); transform-origin: 0 50%; }
+
+  #totop {
+    position: fixed; right: 18px; bottom: 18px; z-index: 55;
+    padding: 9px 13px;
+    font: 600 10.5px/1 var(--mono); text-transform: uppercase; letter-spacing: .12em;
+    background: var(--toolbar-bg); color: var(--text);
+    border: 1px solid var(--toolbar-border); border-radius: var(--r-sm);
+    opacity: 0; visibility: hidden; transform: translateY(6px);
+    transition: opacity .18s ease, transform .18s ease, visibility .18s;
+  }
+  #totop.is-on { opacity: 1; visibility: visible; transform: none; }
+  #totop:hover { border-color: var(--accent); color: var(--accent); }
+
+  @media (max-width: 760px) { .pillnav { position: static; } }
 </style>
 </head>
 <body>
+<div id="readbar" aria-hidden="true"><i></i></div>
 
 <header class="top">
   <div class="wrap top-in">
@@ -218,16 +212,16 @@
       <div class="card"><h3><i class="dot"></i>Ek folder, koi server nahi</h3>
         <p>Har diagram ek independent HTML file hai. <code class="inline-code">index.html</code> kholte hi sab kuch load ho jaata hai.
         <code class="inline-code">file://</code> pe chalta hai - na Node chahiye, na Python, na internet.</p></div>
-      <div class="card"><h3><i class="dot s"></i>Sab kuch generated hai, haath se nahi</h3>
+      <div class="card"><h3><i class="dot"></i>Sab kuch generated hai, haath se nahi</h3>
         <p>Diagram ka data, code links, index aur code mirror sab <code class="inline-code">tools/*.mjs</code> scripts se bante hain.
         Isliye content kabhi diagram aur real code se drift nahi karta.</p></div>
-      <div class="card"><h3><i class="dot v"></i>Diagram = ek idea</h3>
+      <div class="card"><h3><i class="dot"></i>Diagram = ek idea</h3>
         <p>Har page sirf ek cheez sikhata hai: request path, proxy trap, transaction boundary, readiness probe.
         Ek page = ek mental model. Isliye 21 pages hain, ek bada page nahi.</p></div>
-      <div class="card"><h3><i class="dot a"></i>Real code, real responses</h3>
+      <div class="card"><h3><i class="dot"></i>Real code, real responses</h3>
         <p>Book Store project ka source page ke andar hi mirror hota hai, aur API responses ek baar live capture kiye gaye hain -
         N+1 ka 18 queries vs 1, transaction modes ka 201/409. Sab proof ke saath.</p></div>
-      <div class="card"><h3><i class="dot r"></i>Sab kuch browser mein rehta hai</h3>
+      <div class="card"><h3><i class="dot"></i>Sab kuch browser mein rehta hai</h3>
         <p>Quiz score, notes, progress - sab <code class="inline-code">localStorage</code> mein, sirf isi browser mein.
         Kuch upload nahi hota. Progress tab se ek click mein reset bhi ho jaata hai.</p></div>
       <div class="card"><h3><i class="dot"></i>Offline bhi, print bhi</h3>
@@ -254,7 +248,7 @@
       <li><b><kbd>N</kbd> se note likho</b>
         <span>Jo cheez baar baar bhoolte ho, usi node pe note likh do. Notes progress ke saath browser mein save rehte hain - interview revision ke liye yahi kaam aayega.</span></li>
     </ol>
-    <div class="note tip"><b>Tip:</b> Ek baar mein saare 21 diagrams mat kholo. Ek track khatam karo, quiz clear karo, tabhi agla track shuru karo. Warna information overload ho jaayega aur retention zero.</div>
+    <div class="note tip">Ek baar mein saare 21 diagrams mat kholo. Ek track khatam karo, quiz clear karo, tabhi agla track shuru karo. Warna information overload ho jaayega aur retention zero.</div>
   </section>
 
   <!-- 03 -->
@@ -270,13 +264,13 @@
       <div class="m"><kbd>6</kbd><b>Progress</b><span>Diagram-wise: opened, quiz score, notes count, aur ek progress bar.</span></div>
     </div>
     <div class="grid" style="margin-top:12px">
-      <div class="card"><h3><i class="dot s"></i>Home ke cards</h3>
+      <div class="card"><h3><i class="dot"></i>Home ke cards</h3>
         <p>Har card ek specific entry point hai - roadmap, request path, proxy trap, N+1, observability, aur Book Store project.
         "How to use it" section ke chhe cards har functionality ka one-liner explanation dete hain.</p></div>
-      <div class="card"><h3><i class="dot a"></i>Practice tab asal doston ke liye</h3>
+      <div class="card"><h3><i class="dot"></i>Practice tab asal doston ke liye</h3>
         <p>Yahan se quiz picker khulta hai: diagram choose karo, uske saare questions ek saath solve karo.
         Debugging table 47 entries hai - symptom pehle, phir cause, phir fix.</p></div>
-      <div class="card"><h3><i class="dot v"></i>Concepts tab = sideways linking</h3>
+      <div class="card"><h3><i class="dot"></i>Concepts tab = sideways linking</h3>
         <p>Jaise "self-invocation" concept AOP, AntiPatterns aur Transactions teeno mein hai. Concept card kholo aur teeno jagah ek click pe dekho.
         Yahi wo jagah hai jahan se ek trap ko teen angle se samajh aata hai.</p></div>
     </div>
@@ -290,15 +284,15 @@
       <div class="card"><h3><i class="dot"></i>Hover / Tab = semantic passport</h3>
         <p>Kisi bhi node ya relationship pe hover karo (ya keyboard se Tab se uspe focus lo) - ek card khulta hai jismein
         summary aur teen specific points hoti hain. Ye ratne wala content nahi, samajhne wala content hai.</p></div>
-      <div class="card"><h3><i class="dot s"></i>Concept chips = sideways jump</h3>
+      <div class="card"><h3><i class="dot"></i>Concept chips = sideways jump</h3>
         <p>Passport ke andar agar concept chips dikhein, matlab ye idea doosre diagrams mein bhi hai. Chip pe click karo -
         wahi concept us angle se khul jaata hai.</p></div>
-      <div class="card"><h3><i class="dot v"></i>Code chips = seedha source</h3>
+      <div class="card"><h3><i class="dot"></i>Code chips = seedha source</h3>
         <p>Passport mein jo file ka chip hota hai, wo us node ka real code dikhata hai - in-page viewer mein, naye tab mein nahi.</p></div>
-      <div class="card"><h3><i class="dot a"></i>Guided views + Present mode</h3>
+      <div class="card"><h3><i class="dot"></i>Guided views + Present mode</h3>
         <p>Har diagram mein 0-3 guided views hain. <kbd>P</kbd> dabao: baaki nodes dim ho jaate hain, sirf focus wale bright rehte hain,
         neeche narration aata hai. <kbd>&rarr;</kbd>, <kbd>Space</kbd> ya <kbd>P</kbd> se aage, <kbd>&larr;</kbd> se peeche.</p></div>
-      <div class="card"><h3><i class="dot r"></i>Upar ki toolbar</h3>
+      <div class="card"><h3><i class="dot"></i>Upar ki toolbar</h3>
         <p>Search, Walk through, Code lab, Quiz, Notes, Present, Terms, Debug, Interview, Hub - sab ek click door.
         Har button ke saath uska shortcut bhi likha hota hai.</p></div>
       <div class="card"><h3><i class="dot"></i>Deep links</h3>
@@ -339,15 +333,15 @@
       <div class="card"><h3><i class="dot"></i>Code lab panel (<kbd>C</kbd>)</h3>
         <p>Diagram ka overview, uske shared concepts, guided views, aur "Runnable code in Book Store" ki list -
         har file ke saath "in page" badge. Neeche Walk through aur captured response ke buttons.</p></div>
-      <div class="card"><h3><i class="dot s"></i>Source viewer</h3>
+      <div class="card"><h3><i class="dot"></i>Source viewer</h3>
         <p>Har code link ek hi page andar khulta hai: upar file ka role badge, path aur summary; uske neeche
         <b>structure outline</b> (class/method/field chips) jinpe click karke seedha line pe jump karo; phir poora file
         syntax highlighting ke saath; aur jo lines explained hain, unke saath unka explanation.</p></div>
-      <div class="card"><h3><i class="dot v"></i>Walk through (walkthrough)</h3>
+      <div class="card"><h3><i class="dot"></i>Walk through (walkthrough)</h3>
         <p>N+1 aur Transactions diagrams pe toolbar mein "Walk through" button hai. Har step mein source ke saath
         us waqt ka <b>database query count</b> ya <b>transaction report</b> side by side hota hai. Step by step
         dekho ki 1 query kaise 18 ban jaati hai.</p></div>
-      <div class="card"><h3><i class="dot a"></i>Captured responses (evidence)</h3>
+      <div class="card"><h3><i class="dot"></i>Captured responses (evidence)</h3>
         <p>Ye screenshot nahi, ek baar live app chala kar capture kiye gaye real HTTP responses hain:
         join-fetch = 1 query aur payload byte-identical, <code class="inline-code">mode=required</code> / <code class="inline-code">requires-new</code> = 201,
         <code class="inline-code">mode=poison</code> = 409 rollback.</p></div>
@@ -393,14 +387,14 @@
         <p>Diagram-wise table: opened hai ya nahi, quiz kitne right, kitne notes, aur ek bar jo teenon ko jod kar
         dikhata hai (34% opened + 33% quiz + 33% notes). Track tab mein har track ke upar apna progress bar hai.</p>
         <p><b>Reset all progress</b> sab kuch ek saath mita deta hai - Progress tab ke neeche.</p></div>
-      <div class="card"><h3><i class="dot s"></i>Sab kuch local hai</h3>
+      <div class="card"><h3><i class="dot"></i>Sab kuch local hai</h3>
         <p><code class="inline-code">sbk.v1.progress</code>, <code class="inline-code">sbk.v1.quiz</code>,
         <code class="inline-code">sbk.v1.notes</code> - teen keys, sab browser ke <code class="inline-code">localStorage</code> mein.
         Koi account nahi, koi server call nahi. Doosre browser/machine pe progress nahi jaayega.</p></div>
-      <div class="card"><h3><i class="dot v"></i>Theme</h3>
+      <div class="card"><h3><i class="dot"></i>Theme</h3>
         <p>Header mein <b>Theme</b> button - dark/light. Choice <code class="inline-code">sbk.theme</code> mein save hoti hai,
         agli baar bhi wahi rahegi. Raat ko padhne ke liye light theme, din mein dark - jo aankhon ko sahi lage.</p></div>
-      <div class="card"><h3><i class="dot a"></i>Print / PDF export</h3>
+      <div class="card"><h3><i class="dot"></i>Print / PDF export</h3>
         <p>Header ka <b>Print</b> button (ya Progress tab ka <b>Print / export this page</b>) browser print dialogue kholta hai -
         PDF banake interview se pehle ki revision ke liye rakh lo.</p></div>
     </div>
@@ -410,6 +404,11 @@
   <section class="sec" id="s09">
     <div class="sechead"><span class="num">09</span><h2>Keyboard cheat sheet</h2></div>
     <p class="sub">Ye table ek baar rat lo - baaki sab apne aap fast ho jaayega. Sabhi shortcuts kisi bhi diagram page pe kaam karte hain.</p>
+    <div class="tbl-head" id="s09-head">
+      <h3>All shortcuts</h3>
+      <span class="spacer"></span>
+      <button class="sb-btn" id="copykeys" type="button">Copy table</button>
+    </div>
     <table class="tbl">
       <thead><tr><th>Key</th><th>Kya kholta hai</th></tr></thead>
       <tbody>
@@ -440,37 +439,37 @@
       <div class="card"><h3><i class="dot"></i>1. Pehle socho, phir hover karo</h3>
         <p>Node pe hover karne se pehle 5 second khud socho ki uska answer kya hoga. Active recall se retention
         kai guna badhta hai. Hover card sirf apne answer ko confirm karne ke liye dekho.</p></div>
-      <div class="card"><h3><i class="dot s"></i>2. Har diagram ke baad quiz, bina exception ke</h3>
+      <div class="card"><h3><i class="dot"></i>2. Har diagram ke baad quiz, bina exception ke</h3>
         <p>Diagram padhna comfort deta hai, quiz hi gap dikhata hai. Galat jawab ka explanation zaroor padho -
         wahi wo jagah hai jahan actual misconception milta hai.</p></div>
-      <div class="card"><h3><i class="dot v"></i>3. Notes ko interview-prep banao</h3>
+      <div class="card"><h3><i class="dot"></i>3. Notes ko interview-prep banao</h3>
         <p>Har note ko aise likho jaise ek hafte baad khud ko samjha rahe ho: "REQUIRED vs REQUIRES_NEW ka farq -
         outer suspend hota hai, isliye..." Ye notes baad mein ek personal cheat sheet ban jaate hain.</p></div>
-      <div class="card"><h3><i class="dot a"></i>4. Concept chips se sideways jao</h3>
+      <div class="card"><h3><i class="dot"></i>4. Concept chips se sideways jao</h3>
         <p>Jab bhi passport mein concept chip dikhe, uspe click karo. Ek trap ko teen alag angle se dekhna
         = wo concept genuinely samajh aana. Iske liye Concepts tab bhi hai.</p></div>
-      <div class="card"><h3><i class="dot r"></i>5. Debug table ko symptom se uthao</h3>
+      <div class="card"><h3><i class="dot"></i>5. Debug table ko symptom se uthao</h3>
         <p>Ratna band karo. Jab bhi koi error dikhe, <kbd>T</kbd> kholo aur exception ka naam search karo.
         Cause aur fix dono mil jaate hain. Ye "googling errors" ki aadat ko replace karta hai.</p></div>
       <div class="card"><h3><i class="dot"></i>6. Interview bank ko mock banao</h3>
         <p>Seedha answer mat padho. Question suno, 60 second bolo, phir "Show answer" dabao, phir khud ko score karo.
         Junior &rarr; mid &rarr; senior ka order rakho.</p></div>
-      <div class="card"><h3><i class="dot s"></i>7. Book Store ko chala kar dekho</h3>
+      <div class="card"><h3><i class="dot"></i>7. Book Store ko chala kar dekho</h3>
         <p>Theory tab tak yaad rehti hai jab tak code nahi chalaya. N+1 endpoint ko khud curl karo, query count
         khud dekho. Muscle memory banne mein time lagta hai, isliye ye step skip mat karo.</p></div>
-      <div class="card"><h3><i class="dot v"></i>8. Walkthrough ko "proof" ki tarah dekho</h3>
+      <div class="card"><h3><i class="dot"></i>8. Walkthrough ko "proof" ki tarah dekho</h3>
         <p>Diagram mein likha hai "1 query becomes 18" - walkthrough mein wahi cheez live query count ke saath
         dikhti hai. Ye do cheezein ek saath dekhne se concept permanent ho jaata hai.</p></div>
-      <div class="card"><h3><i class="dot a"></i>9. Ek track hi khatam karo</h3>
+      <div class="card"><h3><i class="dot"></i>9. Ek track hi khatam karo</h3>
         <p>Track ke beech se doosre track pe jump karna sabse bada mistake hai. Track ka progress bar 100% tak le jao,
         uske baad hi agla track kholo.</p></div>
-      <div class="card"><h3><i class="dot r"></i>10. Spaced repetition - 1 hafte baad wapas</h3>
+      <div class="card"><h3><i class="dot"></i>10. Spaced repetition - 1 hafte baad wapas</h3>
         <p>Ek track khatam karke 7 din baad dobara kholo aur sirf quiz do. Jo cheezein ab bhi bhool rahe ho,
         usi pe note update karo. Progress tab se dikh jaayega kahan kamzor ho.</p></div>
       <div class="card"><h3><i class="dot"></i>11. Print/PDF le lo</h3>
         <p>Interview se 2 din pehle poori cheez PDF mein export karke sirf apne notes aur missed quiz questions padho.
         Screen se zyada effective hai.</p></div>
-      <div class="card"><h3><i class="dot s"></i>12. Concepts ko "ek line mein" bolo</h3>
+      <div class="card"><h3><i class="dot"></i>12. Concepts ko "ek line mein" bolo</h3>
         <p>Concepts tab kholo, har concept ko apne shabdon mein ek line mein bolo. Jo na aa sake, wahi dobara padho.
         Yahi self-test ka sabse tez tareeka hai.</p></div>
     </div>
@@ -569,16 +568,16 @@
       <div class="card"><h3><i class="dot"></i>Sab kuch <code class="inline-code">tools/</code> se banta hai</h3>
         <p><code class="inline-code">build-content-index.mjs</code> (index) &rarr; <code class="inline-code">build-code-viewer.mjs</code> (code mirror)
         &rarr; <code class="inline-code">enhance-hover.mjs</code> (diagram tags). Order matter karta hai.</p></div>
-      <div class="card"><h3><i class="dot s"></i>Evidence dobara capture karna ho</h3>
+      <div class="card"><h3><i class="dot"></i>Evidence dobara capture karna ho</h3>
         <p><code class="inline-code">capture-evidence.mjs</code> app khud start karta hai, port 8080 pe jo bhi purana process hai use
         pehle band karta hai, responses assert karta hai, aur band hone par confirm karta hai. Uske baad
         <code class="inline-code">build-traces.mjs</code> chalana zaroori hai.</p></div>
-      <div class="card"><h3><i class="dot v"></i>Validation commands</h3>
+      <div class="card"><h3><i class="dot"></i>Validation commands</h3>
         <p><code class="inline-code">audit-links</code>,
         <code class="inline-code">probe-code-viewer</code>, <code class="inline-code">probe-code-lab</code>,
         <code class="inline-code">probe-hover</code>, <code class="inline-code">probe-kit</code>,
         <code class="inline-code">probe-hub</code> - sab <code class="inline-code">node tools/&lt;name&gt;.mjs</code> se chalte hain.</p></div>
-      <div class="card"><h3><i class="dot a"></i>Naya diagram kaise add karein</h3>
+      <div class="card"><h3><i class="dot"></i>Naya diagram kaise add karein</h3>
         <p>Pehle HTML banao, phir <code class="inline-code">content-index.js</code> rebuild karo, phir
         <code class="inline-code">enhance-hover.mjs</code> chalao. Audit khud check kar lega ki har node id,
         edge aur code link sahi hai.</p></div>
@@ -587,8 +586,6 @@
       <code class="inline-code">code-source.js</code>, <code class="inline-code">content-index.js</code> aur base diagrams
       ko manually edit mat karna - ye generated hain aur agli run par overwrite ho jaayenge.</div>
   </section>
-
-  <div class="hr"></div>
 </main>
 
 <footer class="foot">
@@ -605,6 +602,7 @@
       Har cheez browser mein, kuch bhi server pe nahi jaata.</div>
   </div>
 </footer>
+<button id="totop" type="button" aria-label="Back to top">&uarr; Top</button>
 
 <script>
 (function () {
@@ -653,6 +651,81 @@
   }, { rootMargin: '-110px 0px -65% 0px', threshold: 0 });
 
   targets.forEach(function (t) { io.observe(t); });
+
+  /* reading progress bar + back to top */
+  var fill = document.querySelector('#readbar i');
+  var top = document.getElementById('totop');
+  var ticking = false;
+  function paint() {
+    ticking = false;
+    var doc = document.documentElement;
+    var max = doc.scrollHeight - window.innerHeight;
+    var pos = window.pageYOffset || doc.scrollTop || 0;
+    var p = max > 0 ? Math.min(1, Math.max(0, pos / max)) : 0;
+    if (fill) fill.style.transform = 'scaleX(' + p + ')';
+    if (top) top.classList.toggle('is-on', max > 0 && p > 0.04);
+    /* above the first section: no section is under way, so un-mark the nav */
+    var first = targets[0];
+    var firstTop = first ? first.getBoundingClientRect().top + pos : 0;
+    if (current && first && pos < firstTop - 150) {
+      current = null;
+      for (var i = 0; i < links.length; i++) links[i].removeAttribute('data-on');
+      var strip = document.querySelector('#pillnav .in');
+      if (strip) strip.scrollLeft = 0;
+    }
+  }
+  window.addEventListener('scroll', function () {
+    if (ticking) return;
+    ticking = true;
+    window.requestAnimationFrame(paint);
+  }, { passive: true });
+  window.addEventListener('resize', paint, { passive: true });
+  paint();
+  if (top) top.addEventListener('click', function () {
+    try { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+    catch (e) { window.scrollTo(0, 0); }
+  });
+
+  /* copy the shortcut table as TSV */
+  var copy = document.getElementById('copykeys');
+  if (copy) copy.addEventListener('click', function () {
+    var tbl = document.querySelector('#s09 table.tbl');
+    if (!tbl) return;
+    var rows = tbl.querySelectorAll('tr');
+    var text = '';
+    for (var i = 0; i < rows.length; i++) {
+      var cells = rows[i].querySelectorAll('th, td');
+      var line = [];
+      for (var j = 0; j < cells.length; j++) {
+        line.push((cells[j].textContent || '').replace(/\s+/g, ' ').trim());
+      }
+      text += line.join('\t');
+      if (i < rows.length - 1) text += '\n';
+    }
+    var done = function () {
+      copy.textContent = 'Copied';
+      setTimeout(function () { copy.textContent = 'Copy table'; }, 1600);
+    };
+    var legacy = function () {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.setAttribute('readonly', '');
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      var ok = false;
+      try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+      document.body.removeChild(ta);
+      if (ok) done();
+      else copy.textContent = 'Select and copy';
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, legacy);
+    } else {
+      legacy();
+    }
+  });
 })();
 </script>
 </body>
