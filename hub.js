@@ -64,6 +64,67 @@
     });
   }
 
+  /* Status strip above the home pane: how far the reader has got, one-click
+   * resume into the most recently opened diagram, and the keys that are easy
+   * to forget. Progress values are Date.now() stamps written by sbkit.js. */
+  function renderRail() {
+    var host = document.getElementById('rail');
+    if (!host) return;
+    clear(host);
+
+    var progress = read('progress', {});
+    var quiz = read('quiz', {});
+    var notes = read('notes', {});
+
+    var opened = keys.filter(function (k) { return progress[k]; });
+    var last = null, lastT = -1;
+    keys.forEach(function (k) {
+      var t = progress[k];
+      if (typeof t !== 'number' || t <= lastT) return;
+      lastT = t;
+      last = k;
+    });
+
+    var qDone = 0, qRight = 0;
+    keys.forEach(function (k) { var r = quiz[k]; if (r) { qDone += r.done; qRight += r.score; } });
+    var nAll = Object.keys(notes).filter(function (k) { return notes[k] && notes[k].trim(); }).length;
+
+    host.appendChild(el('span', 'rail-k', 'Status'));
+
+    var meter = el('div', 'meter');
+    var fill = el('i');
+    fill.style.width = Math.round((opened.length / keys.length) * 100) + '%';
+    meter.appendChild(fill);
+    host.appendChild(meter);
+
+    host.appendChild(el('span', 'rail-v', opened.length + '/' + keys.length + ' diagrams opened'));
+    host.appendChild(el('span', 'rail-k', qRight + '/' + qDone + ' quiz right'));
+    host.appendChild(el('span', 'rail-k', nAll + ' notes'));
+
+    if (last) {
+      host.appendChild(el('span', 'rail-sep'));
+      host.appendChild(btn('Resume \u2192 ' + D[last].title, 'sb-btn is-primary', function () { openD(last); }));
+    }
+
+    host.appendChild(el('span', 'rail-sep'));
+    var box = el('div', 'rail-keys');
+    box.appendChild(el('span', 'rail-k', 'Keys'));
+    [
+      ['1-6', 'switch tabs', function () { tab('tracks'); }],
+      ['Ctrl K', 'search everything', function () { if (window.SBKit) window.SBKit.open('search'); }],
+      ['?', 'shortcut list', function () { if (window.SBKit) window.SBKit.open('help'); }]
+    ].forEach(function (r) {
+      var b = el('button', 'keychip');
+      b.type = 'button';
+      b.title = r[1];
+      b.appendChild(el('kbd', null, r[0]));
+      b.appendChild(el('span', null, r[1]));
+      b.addEventListener('click', r[2]);
+      box.appendChild(b);
+    });
+    host.appendChild(box);
+  }
+
   function renderHome() {
     var host = document.getElementById('home-cards');
     clear(host);
@@ -273,6 +334,7 @@
     if (!document.body.classList.contains('sb-hub')) return;
     initTheme();
     renderStats();
+    renderRail();
     renderHome();
     renderLibrary();
     renderPractice();
@@ -287,6 +349,7 @@
     document.getElementById('reset').addEventListener('click', function () {
       ['progress', 'quiz', 'notes'].forEach(function (k) { localStorage.removeItem(LS + k); });
       renderProgress();
+      renderRail();
       if (window.SBKit) window.SBKit.close();
     });
     document.addEventListener('keydown', function (e) {
@@ -303,5 +366,5 @@
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();
 
-  window.SBHub = { tab: tab, refresh: function () { renderProgress(); renderTracks(); } };
+  window.SBHub = { tab: tab, refresh: function () { renderProgress(); renderTracks(); renderRail(); } };
 })();
