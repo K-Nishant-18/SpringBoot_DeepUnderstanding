@@ -813,13 +813,13 @@
     s.appendChild(tb);
     bodyEl.appendChild(s);
     /* The reader who presses ? is asking how to use this. That is exactly who the
-     * standalone Hinglish guide is for, so it is offered here rather than only from
+     * standalone guide is for, so it is offered here rather than only from
      * the hub. */
-    var sg = section('Naya ho?');
-    sg.appendChild(el('div', 'sb-h-s', 'Poora usage guide Hinglish mein: kahan se start karein, har functionality kaise chalti hai, best practices aur 30-din ka study plan.'));
+    var sg = section('New here?');
+    sg.appendChild(el('div', 'sb-h-s', 'The full usage guide: where to start, how every feature works, best practices and a 30-day study plan.'));
     var sgr = el('div', 'sb-row');
     sgr.style.marginTop = '8px';
-    sgr.appendChild(btn('Kholein: Hinglish guide', 'sb-btn is-primary', function () { location.href = 'guide.html'; }));
+    sgr.appendChild(btn('Open the guide', 'sb-btn is-primary', function () { location.href = 'guide.html'; }));
     sgr.appendChild(btn('Hub', 'sb-btn', function () { location.href = 'index.html'; }));
     sg.appendChild(sgr);
     bodyEl.appendChild(sg);

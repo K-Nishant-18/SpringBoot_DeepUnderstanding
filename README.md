@@ -124,10 +124,10 @@ debug entries and interview questions at once.
 
 ### 5 · New here? Read the guide first
 
-Fourteen sections of Hinglish walkthrough — which button does what, every
+Fourteen sections in plain English — which button does what, every
 shortcut, best practices, and a 30-day plan.
 
-![The Hinglish guide hero: "Is project ko 100% kaise use karein aur maximum benefit lein"](docs/screenshots/guide.png)
+![The guide hero: "Use this project the right way and get the most out of it"](docs/screenshots/guide.png)
 
 ---
 
@@ -280,7 +280,7 @@ picture.
 
 ```text
 index.html  hub.js                  the hub: tracks, library, practice, progress
-guide.html                          Hinglish guide — start here if you are new
+guide.html                          plain-English guide — start here if you are new
 sbkit.js  sbkit.css                 the shared kit: passport, panels, code lab
 Spring_Boot_*.html                  21 diagrams, self-contained
 content-index.js  code-source.js    generated: search index, 48 mirrored files
@@ -297,7 +297,7 @@ brag-output/                        the 21-second film, its poster, and the comp
 <a id="docs"></a>
 ## Documentation
 
-- **[guide.html](guide.html)** — how to use every feature, in Hinglish. Start here.
+- **[guide.html](guide.html)** — how to use every feature, in plain English. Start here.
 - **[bookstore/README.md](bookstore/README.md)** — how the companion app maps to
   diagram node-ids, and how to regenerate the assets.
 - **[Spring_Boot_Complete_Notes.docx](Spring_Boot_Complete_Notes.docx)** — the same

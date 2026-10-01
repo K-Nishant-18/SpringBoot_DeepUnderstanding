@@ -128,7 +128,7 @@
   function renderHome() {
     var host = document.getElementById('home-cards');
     clear(host);
-    host.appendChild(card('Pehli baar aaye ho? Ye padho', 'Poori functionality, har shortcut, best practices aur 30-din ka plan - sab Hinglish mein. Platform se max benefit lene ke liye yahi se shuru karo.', ['start here', 'guide.html'], function () { location.href = 'guide.html'; }, 'guide'));
+    host.appendChild(card('First time here? Start with this', 'Every feature, every shortcut, best practices and a 30-day plan - all in plain English. Start here to get the most out of the platform.', ['start here', 'guide.html'], function () { location.href = 'guide.html'; }, 'guide'));
     host.appendChild(card('Start here: the roadmap', 'Six parts, twenty-one diagrams, in the order that actually builds the mental model.', ['1 diagram', '6 sections'], function () { openD('Spring_Boot_Roadmap'); }, 'begin here'));
     host.appendChild(card('Trace a request end to end', 'Browser, filter chain, dispatcher, controller, service, transaction, repository, SQL.', ['7 nodes', '12 relationships'], function () { openD('Spring_Boot_Request_Path'); }));
     host.appendChild(card('See the proxy trap', 'Why @Transactional, @Cacheable and @Async quietly stop working on self-invocation.', ['AOP + anti-patterns'], function () { openD('Spring_Boot_AOP_Proxy'); }));
