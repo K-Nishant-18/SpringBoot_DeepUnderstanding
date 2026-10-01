@@ -1,0 +1,11 @@
+# Build output
+bookstore/target/
+
+# Tool logs and scratch output
+*.log
+
+# Editor and OS noise
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
