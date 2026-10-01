@@ -1,0 +1,10 @@
+target/
+.git/
+.gitignore
+.idea/
+.stubs/
+verify.cmd
+verify.ps1
+README.md
+Dockerfile
+.dockerignore

@@ -1,0 +1,8 @@
+target/
+.stubs-out/
+*.class
+*.log
+.idea/
+*.iml
+.vscode/
+.mvn/

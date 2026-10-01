@@ -1,0 +1,82 @@
+server:
+  port: 8080
+  shutdown: graceful
+
+spring:
+  application:
+    name: bookstore
+  datasource:
+    url: jdbc:h2:mem:bookstore;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+    hikari:
+      pool-name: bookstore-pool
+      maximum-pool-size: 10
+  jpa:
+    hibernate:
+      ddl-auto: none
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: false
+        generate_statistics: true
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql
+      data-locations: classpath:data.sql
+  h2:
+    console:
+      enabled: false
+  threads:
+    virtual:
+      enabled: false
+
+bookstore:
+  catalog:
+    default-page-size: 20
+    max-page-size: 200
+    currency: EUR
+  orders:
+    low-stock-threshold: 2
+    outbox-relay-delay-ms: 5000
+    outbox-batch-size: 50
+  async:
+    core-pool-size: 2
+    max-pool-size: 8
+    queue-capacity: 100
+    await-timeout-ms: 30000
+  outbox:
+    relay-enabled: true
+  relay:
+    topic: bookstore.orders.v1
+    max-attempts: 5
+    headers:
+      source: bookstore-outbox
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when-authorized
+      probes:
+        enabled: true
+      group:
+        readiness:
+          include: db,outbox
+          show-details: when-authorized
+        liveness:
+          include: ping
+          show-details: when-authorized
+  health:
+    db:
+      enabled: true
+
+logging:
+  level:
+    com.example.bookstore: DEBUG
+    org.hibernate.SQL: DEBUG

@@ -1,0 +1,55 @@
+spring:
+  datasource:
+    url: ${BOOKSTORE_DB_URL:jdbc:h2:mem:bookstore-prod;DB_CLOSE_DELAY=-1}
+    username: ${BOOKSTORE_DB_USER:sa}
+    password: ${BOOKSTORE_DB_PASSWORD:}
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 3000
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  sql:
+    init:
+      mode: never
+
+bookstore:
+  catalog:
+    max-page-size: 50
+    currency: USD
+  orders:
+    low-stock-threshold: 5
+    outbox-relay-delay-ms: 1000
+  async:
+    core-pool-size: 8
+    max-pool-size: 32
+    queue-capacity: 1000
+
+server:
+  shutdown: graceful
+  tomcat:
+    threads:
+      max: 200
+      max-connections: 8192
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      group:
+        readiness:
+          include: db,outbox
+        liveness:
+          include: ping
+      probes:
+        enabled: true
+
+logging:
+  level:
+    com.example.bookstore: INFO
+    org.hibernate.SQL: WARN
