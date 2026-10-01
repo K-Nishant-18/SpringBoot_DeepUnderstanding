@@ -10,6 +10,8 @@
   --sb-ink-soft: var(--text-muted, #94a3b8);
   --sb-ink-dim: var(--text-dim, #64748b);
   --sb-shadow: 0 18px 48px rgba(0, 0, 0, 0.45);
+  --sb-rail-w: clamp(340px, 30vw, 500px);
+  --sb-stage-h: clamp(300px, 46vh, 500px);
 }
 
 #sbkit, #sbkit * { box-sizing: border-box; }
@@ -193,13 +195,162 @@
 .sb-dict dt { font-weight: 700; padding: 6px 0; border-top: 1px solid var(--sb-edge); }
 .sb-dict dd { margin: 0; padding: 6px 0; color: var(--sb-ink-soft); line-height: 1.5; border-top: 1px solid var(--sb-edge); }
 
+/* ---------------------------------------------------------- presentation
+ * Present mode borrows the diagram's own Presentation Stage (which gives the
+ * SVG the whole viewport) and docks a notes rail on the right, so the artwork
+ * ends up bigger than it is at rest. The flat scrim becomes a soft light that
+ * follows the step: what is being talked about stays bright while the rest of
+ * the diagram falls away. */
+
+@property --sb-spot-x { syntax: '<length>'; inherits: true; initial-value: 50vw; }
+@property --sb-spot-y { syntax: '<length>'; inherits: true; initial-value: 40vh; }
+@property --sb-spot-r { syntax: '<length>'; inherits: true; initial-value: 1100px; }
+
 body.sb-present #sbkit .sb-bar { opacity: 0; pointer-events: none; transition: opacity 0.2s; }
 body.sb-present #sbkit .sb-bar:hover { opacity: 1; pointer-events: auto; }
 body.sb-present .archify-toolbar,
 body.sb-present [class*="toolbar"]:not(#sbkit *):not(.sb-bar) { display: none !important; }
-body.sb-present #sbkit .sb-overlay { padding: 3vh 14px; }
-body.sb-present #sbkit .sb-panel { max-height: 94vh; }
-body.sb-present #archify-hover-card { z-index: 2147483050; }
+
+body.sb-present #sbkit .sb-overlay {
+  align-items: stretch;
+  justify-content: flex-end;
+  padding: 0;
+  pointer-events: none;
+  backdrop-filter: none;
+  background: radial-gradient(circle var(--sb-spot-r) at var(--sb-spot-x) var(--sb-spot-y),
+    rgba(2, 6, 23, 0) 0%, rgba(2, 6, 23, 0.04) 44%, rgba(2, 6, 23, 0.42) 74%, rgba(2, 6, 23, 0.8) 100%);
+  transition: --sb-spot-x 0.55s ease, --sb-spot-y 0.55s ease, --sb-spot-r 0.55s ease;
+}
+body.sb-present #sbkit .sb-panel {
+  pointer-events: auto;
+  width: var(--sb-rail-w);
+  max-width: var(--sb-rail-w);
+  height: auto;
+  max-height: none;
+  margin: 8px 8px 8px 0;
+  border-radius: 16px;
+  border-color: rgba(148, 163, 184, 0.28);
+  box-shadow: -20px 0 54px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(2, 6, 23, 0.55);
+}
+body.sb-present #sbkit .sb-head {
+  position: relative; flex-wrap: wrap; padding: 11px 12px 12px; row-gap: 9px;
+}
+body.sb-present #sbkit .sb-rail { flex: 1 1 100%; min-width: 0; }
+.sb-rail .sb-chip { white-space: nowrap; }
+.sb-rail .sb-chip[data-sb-on] { background: var(--sb-accent); border-color: var(--sb-accent); color: #04140f; }
+.sb-prog { position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: rgba(148, 163, 184, 0.18); }
+.sb-prog i { display: block; height: 100%; background: var(--sb-accent); box-shadow: 0 0 10px var(--sb-accent); transition: width 0.5s ease; }
+
+body.sb-present #sbkit .sb-body { padding: 15px 16px 18px; }
+body.sb-present #sbkit .sb-foot { flex-wrap: wrap; padding: 10px 12px; }
+
+.sb-sect.sb-stage-head > h3 {
+  display: flex; align-items: center; gap: 10px;
+  margin: 0 0 6px; font-size: clamp(19px, 2vw, 27px); font-weight: 700;
+  letter-spacing: -0.015em; text-transform: none; color: var(--sb-ink);
+}
+.sb-sect.sb-stage-head > h3::before {
+  content: attr(data-step);
+  font: 700 11px/1 var(--sb-mono); letter-spacing: 0.06em;
+  color: var(--sb-accent); background: rgba(52, 211, 153, 0.14);
+  border: 1px solid rgba(52, 211, 153, 0.34); border-radius: 6px; padding: 5px 7px;
+}
+.sb-lead { margin: 0; font-size: 14.5px; line-height: 1.55; color: var(--sb-ink-soft); max-width: 94ch; }
+.sb-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.sb-meta span {
+  font: 600 10px/1 var(--sb-mono); letter-spacing: 0.07em; text-transform: uppercase;
+  color: var(--sb-ink-dim); border: 1px solid var(--sb-edge); border-radius: 999px; padding: 5px 9px;
+}
+
+.sb-passports { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
+.sb-pass {
+  border: 1px solid var(--sb-edge); border-radius: 12px; padding: 11px 12px 12px;
+  background: linear-gradient(180deg, rgba(148, 163, 184, 0.1), rgba(148, 163, 184, 0.035));
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+}
+.sb-pass:hover {
+  border-color: var(--sb-accent); transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
+}
+.sb-pass-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.sb-pass-top b { font-size: 14px; font-weight: 700; letter-spacing: -0.01em; }
+.sb-kind {
+  font: 700 9px/1 var(--sb-mono); letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 4px 6px; border-radius: 5px;
+  color: var(--sb-accent); background: rgba(52, 211, 153, 0.14); border: 1px solid rgba(52, 211, 153, 0.32);
+}
+.sb-pass[data-kind="database"] .sb-kind { color: #7dd3fc; background: rgba(125, 211, 252, 0.14); border-color: rgba(125, 211, 252, 0.3); }
+.sb-pass[data-kind="frontend"] .sb-kind { color: #c084fc; background: rgba(192, 132, 252, 0.14); border-color: rgba(192, 132, 252, 0.3); }
+.sb-pass[data-kind="security"] .sb-kind { color: #f472b6; background: rgba(244, 114, 182, 0.14); border-color: rgba(244, 114, 182, 0.3); }
+.sb-pass[data-kind="external"] .sb-kind,
+.sb-pass[data-kind="cloud"] .sb-kind { color: #fbbf24; background: rgba(251, 191, 36, 0.14); border-color: rgba(251, 191, 36, 0.3); }
+.sb-pass[data-kind="messagebus"] .sb-kind { color: #fb923c; background: rgba(251, 146, 60, 0.14); border-color: rgba(251, 146, 60, 0.3); }
+.sb-tag { margin-left: auto; font: 500 10px/1 var(--sb-mono); color: var(--sb-ink-dim); }
+.sb-mono { margin-top: 5px; font: 500 10.5px/1.5 var(--sb-mono); color: var(--sb-ink-dim); }
+.sb-sum { margin: 7px 0 0; font-size: 12.5px; line-height: 1.5; color: var(--sb-ink-soft); }
+.sb-bul { display: grid; gap: 4px; margin: 8px 0 0; padding: 0; list-style: none; }
+.sb-bul li { position: relative; padding-left: 12px; font-size: 11.5px; line-height: 1.45; color: var(--sb-ink-soft); }
+.sb-bul li::before {
+  content: ""; position: absolute; left: 0; top: 0.55em; width: 5px; height: 5px;
+  border-radius: 999px; background: var(--sb-accent); opacity: 0.75;
+}
+.sb-pass-chips { margin-top: 9px; }
+
+.sb-rels { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 8px 16px; }
+.sb-rel {
+  padding: 8px 10px; border-left: 2px solid var(--sb-accent);
+  background: rgba(148, 163, 184, 0.07); border-radius: 0 8px 8px 0;
+}
+.sb-rel-line { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; font-size: 12.5px; font-weight: 650; }
+.sb-rel-a::after { content: "\2192"; margin-left: 7px; color: var(--sb-accent); font-weight: 700; }
+.sb-rel-e {
+  font: 700 10px/1 var(--sb-mono); letter-spacing: 0.04em;
+  color: var(--sb-accent); background: rgba(52, 211, 153, 0.14);
+  border: 1px solid rgba(52, 211, 153, 0.3); border-radius: 999px; padding: 4px 8px;
+}
+.sb-rel-s { margin: 5px 0 0; font-size: 11.5px; line-height: 1.45; color: var(--sb-ink-dim); }
+
+.sb-hint { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; color: var(--sb-ink-dim); }
+.sb-hint span { margin-right: 5px; }
+.sb-foot .sb-kbd {
+  font: 600 10px/1 var(--sb-mono); padding: 3px 5px; border-radius: 4px;
+  background: rgba(148, 163, 184, 0.18); color: var(--sb-ink-soft);
+}
+
+/* the rail takes the right edge, so the diagram is centred in what is left
+   and ends up wider than it is on the resting page */
+html[data-present="true"]:not([data-embed="true"]) body.sb-present { padding-right: calc(var(--sb-rail-w) + 1rem); }
+body.sb-present .container > .guided-views { display: none !important; }
+body.sb-present #archify-hover-card { z-index: 2147483110; }
+
+body.sb-present svg [data-node-id],
+body.sb-present svg [data-edge-from][data-edge-to] { transition: opacity 0.45s ease, filter 0.45s ease; }
+body.sb-present svg [data-sb-hot] { opacity: 1 !important; filter: drop-shadow(0 0 8px rgba(52, 211, 153, 0.75)) !important; }
+
+/* too narrow for a rail: the notes become a sheet along the bottom and the
+   diagram keeps the space above it */
+@media (max-width: 900px) {
+  body.sb-present { --sb-stage-h: min(62vh, 440px); }
+  html[data-present="true"]:not([data-embed="true"]) body.sb-present {
+    padding-right: 1rem;
+    padding-bottom: calc(var(--sb-stage-h) + 1rem);
+  }
+  html[data-present="true"]:not([data-embed="true"]) body.sb-present .container {
+    height: calc(100dvh - 2rem - var(--sb-stage-h));
+  }
+  body.sb-present #sbkit .sb-overlay { align-items: flex-end; justify-content: center; }
+  body.sb-present #sbkit .sb-panel {
+    width: calc(100vw - 12px);
+    max-width: none;
+    height: var(--sb-stage-h);
+    max-height: var(--sb-stage-h);
+    margin: 0 0 6px;
+    border-radius: 14px;
+    box-shadow: 0 -16px 44px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(2, 6, 23, 0.55);
+  }
+  body.sb-present .sb-passports { grid-template-columns: 1fr; }
+  body.sb-present .sb-hint { display: none; }
+}
 
 @media (max-width: 720px) {
   .sb-bar button span:not(.sb-ico):not(.sb-kbd) { display: none; }
@@ -378,4 +529,9 @@ body.sb-present #archify-hover-card { z-index: 2147483050; }
 
 @media (prefers-reduced-motion: reduce) {
   #sbkit .sb-cl-flash { animation: none; }
+  body.sb-present #sbkit .sb-overlay,
+  body.sb-present .sb-prog i,
+  body.sb-present .sb-pass,
+  body.sb-present svg [data-node-id],
+  body.sb-present svg [data-edge-from][data-edge-to] { transition: none; }
 }

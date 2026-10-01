@@ -95,6 +95,7 @@
   }
 
   function open(v, arg) {
+    if (view === 'present' && v !== 'present') stopPresent();
     view = v;
     state.arg = arg;
     root.setAttribute('data-sb-open', '');
@@ -718,26 +719,85 @@
     bodyEl.appendChild(cs);
   }
 
-  var presentState = { on: false, i: 0 };
+  var presentState = { on: false, i: 0, auto: null, ob: null };
+
+  function pad2(n) { return (n < 10 ? '0' : '') + n; }
 
   function presentSteps() {
     if (!DIA) return [];
-    var steps = [{ id: 'overview', label: 'Overview', note: 'The whole diagram. Hover any node for the full detail.', focus: null }];
+    var steps = [{ id: 'overview', label: 'Overview', note: 'The whole diagram, nothing dimmed. Hover any node for its full passport, or step through the guided views below.', focus: null }];
     DIA.views.forEach(function (v) { steps.push({ id: v.id, label: v.label, note: v.note, focus: v.focus }); });
     return steps;
   }
 
+  function nodeEl(id) {
+    var q = window.CSS && CSS.escape ? CSS.escape(id) : id;
+    return document.querySelector('svg [data-node-id="' + q + '"]');
+  }
+
+  /* The diagrams ship their own Presentation Stage: a viewport-filling layout
+   * that gives the SVG the whole screen. Present mode borrows it and only
+   * reserves the right edge for its rail, so the artwork is never
+   * re-implemented here. Guarded, because not every page has it. */
+  function stage(on) {
+    try {
+      if (window.Archify && Archify.presentation) {
+        if (on) Archify.presentation.enter(); else Archify.presentation.exit();
+      }
+    } catch (e) { /* the stage is a bonus, never a requirement */ }
+  }
+
+  /* A soft light follows the step instead of a flat dim over everything: the
+   * focus group stays bright and the rest of the diagram falls away. */
+  function paintSpot(focus) {
+    if (!overlay) return;
+    var box = null;
+    (focus || []).forEach(function (id) {
+      var n = nodeEl(id);
+      if (!n) return;
+      var b = n.getBoundingClientRect();
+      if (!b.width && !b.height) return;
+      box = box ? {
+        l: Math.min(box.l, b.left), t: Math.min(box.t, b.top),
+        r: Math.max(box.r, b.right), b: Math.max(box.b, b.bottom)
+      } : { l: b.left, t: b.top, r: b.right, b: b.bottom };
+    });
+    if (!box) {
+      var host = document.querySelector('.diagram-container');
+      var hb = host ? host.getBoundingClientRect() : null;
+      if (hb && hb.width && hb.height) box = { l: hb.left, t: hb.top, r: hb.right, b: hb.bottom };
+      else box = { l: 0, t: 0, r: window.innerWidth, b: window.innerHeight };
+    }
+    var cx = (box.l + box.r) / 2, cy = (box.t + box.b) / 2;
+    var corner = Math.max(
+      Math.hypot(cx, cy), Math.hypot(window.innerWidth - cx, cy),
+      Math.hypot(cx, window.innerHeight - cy),
+      Math.hypot(window.innerWidth - cx, window.innerHeight - cy)
+    );
+    var w = box.r - box.l, h = box.b - box.t;
+    /* a step gets a tight light around its nodes; the overview gets a light
+     * wide enough to reach the corners, so the edges of the artwork fall away */
+    var r = focus && focus.length
+      ? Math.min(Math.max(Math.hypot(w, h) / 2 * 1.9 + 70, 340), corner)
+      : corner;
+    overlay.style.setProperty('--sb-spot-x', Math.round(cx) + 'px');
+    overlay.style.setProperty('--sb-spot-y', Math.round(cy) + 'px');
+    overlay.style.setProperty('--sb-spot-r', Math.round(r) + 'px');
+  }
+
   function applyDim(focus) {
     var svg = document.querySelector('svg');
-    if (!svg) return;
+    if (!svg) { paintSpot(focus); return; }
     var nodes = svg.querySelectorAll('[data-node-id]');
     var keep = {};
     (focus || []).forEach(function (f) { keep[f] = 1; });
     Array.prototype.forEach.call(nodes, function (n) {
       var id = n.getAttribute('data-node-id');
-      if (!focus) { n.style.removeProperty('opacity'); n.style.removeProperty('filter'); return; }
-      if (keep[id]) { n.style.removeProperty('opacity'); n.style.removeProperty('filter'); }
+      var lit = !focus || keep[id];
+      if (lit) { n.style.removeProperty('opacity'); n.style.removeProperty('filter'); }
       else { n.style.opacity = '0.16'; n.style.filter = 'saturate(0.2)'; }
+      if (focus && keep[id]) n.setAttribute('data-sb-focus', '');
+      else n.removeAttribute('data-sb-focus');
     });
     var edges = svg.querySelectorAll('[data-edge-from][data-edge-to]');
     Array.prototype.forEach.call(edges, function (e) {
@@ -746,6 +806,34 @@
       if (keep[f] || keep[t]) e.style.removeProperty('opacity');
       else e.style.opacity = '0.08';
     });
+    paintSpot(focus);
+  }
+
+  function autoStop() {
+    if (presentState.auto) { clearInterval(presentState.auto); presentState.auto = null; }
+  }
+
+  function autoStart() {
+    autoStop();
+    presentState.auto = setInterval(function () {
+      if (!presentState.on || view !== 'present') { autoStop(); return; }
+      var n = presentSteps().length;
+      if (n) stepTo(presentState.i + 1, false);
+    }, 9000);
+  }
+
+  function autoToggle() {
+    if (presentState.auto) autoStop(); else autoStart();
+    render();
+  }
+
+  function stepTo(i, manual) {
+    var steps = presentSteps();
+    if (!steps.length) return;
+    if (manual) autoStop();
+    var n = steps.length;
+    presentState.i = ((i % n) + n) % n;
+    render();
   }
 
   function startPresent(i) {
@@ -754,44 +842,206 @@
     presentState.on = true;
     presentState.i = i || 0;
     document.body.classList.add('sb-present');
+    stage(true);
+    /* The diagram's own stage can be left with F while this panel is open.
+     * Following it keeps the reserved space and the panel in step. */
+    if (window.MutationObserver && !presentState.ob) {
+      presentState.ob = new MutationObserver(function () {
+        if (!presentState.on) return;
+        if (document.documentElement.getAttribute('data-present') !== 'true') close();
+      });
+      presentState.ob.observe(document.documentElement, { attributes: true, attributeFilter: ['data-present'] });
+    }
     open('present');
   }
+
   function stopPresent() {
     if (!presentState.on) return;
     presentState.on = false;
+    autoStop();
+    if (presentState.ob) { presentState.ob.disconnect(); presentState.ob = null; }
     document.body.classList.remove('sb-present');
     applyDim(null);
+    stage(false);
   }
+
   function presentGo(id) {
     var steps = presentSteps();
     var i = steps.map(function (s) { return s.id; }).indexOf(id);
     startPresent(i < 0 ? 0 : i);
   }
 
+  /* One card per node in the step: the passport, the bullets, the concepts it
+   * belongs to and the source that implements it. Hovering the card lights the
+   * node on the diagram. */
+  function passportCard(id) {
+    var node = null, nodes = (DIA && DIA.nodes) || [];
+    for (var i = 0; i < nodes.length; i++) if (nodes[i].id === id) { node = nodes[i]; break; }
+    if (!node) return null;
+    var c = el('div', 'sb-pass');
+    c.setAttribute('data-sb-node', id);
+    if (node.kind) c.setAttribute('data-kind', node.kind);
+    var top = el('div', 'sb-pass-top');
+    top.appendChild(el('span', 'sb-kind', node.t || node.kind || 'node'));
+    top.appendChild(el('b', null, node.label));
+    if (node.tag) top.appendChild(el('span', 'sb-tag', node.tag));
+    c.appendChild(top);
+    if (node.sublabel) c.appendChild(el('div', 'sb-mono', node.sublabel));
+    if (node.s) c.appendChild(el('p', 'sb-sum', node.s));
+    if (node.b && node.b.length) {
+      var ul = el('ul', 'sb-bul');
+      node.b.forEach(function (t) { ul.appendChild(el('li', null, t)); });
+      c.appendChild(ul);
+    }
+    var chips = el('div', 'sb-chips sb-pass-chips');
+    conceptsFor(SELF, id).slice(0, 3).forEach(function (sl) {
+      chips.appendChild(btn(CON[sl].t, 'sb-chip', function () { open('concept', sl); }));
+    });
+    ((DIA && DIA.code) || []).filter(function (x) { return x.node === id; }).slice(0, 2).forEach(function (cc) {
+      var key = cc.path.replace(/^bookstore\//, '');
+      chips.appendChild(btn(cc.path.split('/').pop(), 'sb-chip', function () {
+        open('source', { path: key, raw: cc.path });
+      }));
+    });
+    if (chips.childNodes.length) c.appendChild(chips);
+    c.addEventListener('mouseenter', function () { var n = nodeEl(id); if (n) n.setAttribute('data-sb-hot', ''); });
+    c.addEventListener('mouseleave', function () { var n = nodeEl(id); if (n) n.removeAttribute('data-sb-hot'); });
+    return c;
+  }
+
+  function relationsIn(focus) {
+    if (!DIA) return [];
+    var keep = {};
+    focus.forEach(function (k) { keep[k] = 1; });
+    var edges = DIA.edges || [];
+    var intra = edges.filter(function (e) { return keep[e.from] && keep[e.to]; });
+    var list = intra.length ? intra : edges.filter(function (e) { return keep[e.from] || keep[e.to]; });
+    return list.slice(0, 8);
+  }
+
+  function presentConcepts(focus) {
+    var slugs = Object.keys(CON).filter(function (sl) {
+      return CON[sl].refs.some(function (r) { return r[0] === SELF && (!focus || focus.indexOf(r[1]) >= 0); });
+    });
+    if (!slugs.length) return null;
+    var s = section(focus ? 'Concepts in this step' : 'Concepts in this diagram');
+    var chips = el('div', 'sb-chips');
+    slugs.slice(0, 14).forEach(function (sl) {
+      chips.appendChild(btn(CON[sl].t, 'sb-chip', function () { open('concept', sl); }));
+    });
+    if (slugs.length > 14) chips.appendChild(el('span', 'sb-chip', '+' + (slugs.length - 14) + ' more'));
+    s.appendChild(chips);
+    return s;
+  }
+
   function renderPresent() {
     var steps = presentSteps();
     if (!steps.length) { setPanel('Present', '', true); bodyEl.appendChild(el('div', 'sb-empty', 'No guided views available.')); return; }
     if (presentState.i >= steps.length) presentState.i = 0;
+    if (presentState.i < 0) presentState.i = steps.length - 1;
+    var at = presentState.i + 1, total = steps.length;
     var st = steps[presentState.i];
-    setPanel('Present', (presentState.i + 1) + ' / ' + steps.length, true, false, true);
-    var s = section(st.label);
-    s.appendChild(el('div', 'sb-h-s', st.note || ''));
-    if (st.focus) { var f = el('div', 'sb-chips'); f.style.marginTop = '8px'; st.focus.forEach(function (id) { f.appendChild(el('span', 'sb-chip', nodeTitle(SELF, id))); }); s.appendChild(f); }
-    bodyEl.appendChild(s);
-    applyDim(st.focus);
-    var nav = section('Steps');
-    var chips = el('div', 'sb-chips');
+
+    setPanel('Present', pad2(at) + ' / ' + pad2(total), true, false, true);
+
+    /* the step rail lives in the header, so it stays put while the body scrolls */
+    var rail = el('div', 'sb-chips sb-rail');
     steps.forEach(function (x, i) {
-      var b = btn(x.label, 'sb-chip', function () { presentState.i = i; render(); });
+      var b = btn(pad2(i + 1) + ' ' + x.label, 'sb-chip', function () { stepTo(i, true); });
       if (i === presentState.i) b.setAttribute('data-sb-on', '');
-      chips.appendChild(b);
+      rail.appendChild(b);
     });
-    nav.appendChild(chips);
-    bodyEl.appendChild(nav);
+    headEl.appendChild(rail);
+    var prog = el('div', 'sb-prog');
+    var fill = el('i');
+    fill.style.width = (at / total * 100) + '%';
+    prog.appendChild(fill);
+    headEl.appendChild(prog);
+
+    /* 1. the step itself - always the first section of the body */
+    var s = section(st.label);
+    s.className = 'sb-sect sb-stage-head';
+    s.setAttribute('data-step', pad2(at));
+    s.appendChild(el('div', 'sb-lead', st.note || ''));
+    if (st.focus && st.focus.length) {
+      var m = el('div', 'sb-meta');
+      m.appendChild(el('span', null, st.focus.length + ' of ' + ((DIA && DIA.nodes.length) || 0) + ' nodes in focus'));
+      m.appendChild(el('span', null, 'hover a card to light its node'));
+      s.appendChild(m);
+    }
+    bodyEl.appendChild(s);
+
+    if (st.focus && st.focus.length) {
+      var fs = section('In focus');
+      var grid = el('div', 'sb-passports');
+      st.focus.forEach(function (id) { var c = passportCard(id); if (c) grid.appendChild(c); });
+      if (grid.childNodes.length) { fs.appendChild(grid); bodyEl.appendChild(fs); }
+
+      var rel = relationsIn(st.focus);
+      if (rel.length) {
+        var rs = section('How they connect');
+        var rl = el('div', 'sb-rels');
+        rel.forEach(function (e) {
+          var row = el('div', 'sb-rel');
+          var line = el('div', 'sb-rel-line');
+          line.appendChild(el('span', 'sb-rel-a', nodeTitle(SELF, e.from)));
+          line.appendChild(el('span', 'sb-rel-e', e.label || 'relates'));
+          line.appendChild(el('span', 'sb-rel-b', nodeTitle(SELF, e.to)));
+          row.appendChild(line);
+          if (e.s) row.appendChild(el('p', 'sb-rel-s', e.s));
+          rl.appendChild(row);
+        });
+        rs.appendChild(rl);
+        bodyEl.appendChild(rs);
+      }
+      var stepConcepts = presentConcepts(st.focus);
+      if (stepConcepts) { bodyEl.appendChild(stepConcepts); }
+    } else {
+      /* overview: what this diagram is, then what is coming */
+      var os = section('This diagram');
+      var g = el('div', 'sb-ev-grid');
+      g.appendChild(evCell('nodes', DIA.nodes.length));
+      g.appendChild(evCell('relationships', DIA.edges.length));
+      g.appendChild(evCell('guided views', Math.max(total - 1, 0)));
+      g.appendChild(evCell('code links', (DIA.code || []).length));
+      os.appendChild(g);
+      os.appendChild(el('div', 'sb-h-s', DIA.title + ' / ' + DIA.track + ' / ' + DIA.type));
+      bodyEl.appendChild(os);
+
+      var as = section('What is ahead');
+      var list = el('div');
+      steps.forEach(function (x, i) {
+        if (i === 0) return;
+        var b = el('button', 'sb-hit');
+        b.type = 'button';
+        b.appendChild(el('span', 'sb-h-t', pad2(i + 1) + '  ' + x.label));
+        b.appendChild(el('div', 'sb-h-s', x.note));
+        b.appendChild(el('div', 'sb-h-m', x.focus.length + ' nodes in focus'));
+        b.addEventListener('click', function () { stepTo(i, true); });
+        list.appendChild(b);
+      });
+      as.appendChild(list);
+      bodyEl.appendChild(as);
+
+      var allConcepts = presentConcepts(null);
+      if (allConcepts) { bodyEl.appendChild(allConcepts); }
+    }
+
+    applyDim(st.focus);
+    if (window.requestAnimationFrame) {
+      requestAnimationFrame(function () { if (presentState.on && view === 'present') paintSpot(st.focus); });
+    }
+
     clear(footEl);
-    footEl.appendChild(btn('Prev', 'sb-btn', function () { presentState.i = (presentState.i - 1 + steps.length) % steps.length; render(); }));
-    footEl.appendChild(btn('Next', 'sb-btn is-primary', function () { presentState.i = (presentState.i + 1) % steps.length; render(); }));
+    footEl.appendChild(btn('Prev', 'sb-btn', function () { stepTo(presentState.i - 1, true); }));
+    footEl.appendChild(btn('Next', 'sb-btn is-primary', function () { stepTo(presentState.i + 1, true); }));
+    footEl.appendChild(btn(presentState.auto ? 'Pause' : 'Auto', 'sb-btn', autoToggle));
     footEl.appendChild(el('span', 'sb-spacer'));
+    var hint = el('span', 'sb-hint');
+    hint.appendChild(el('b', 'sb-kbd', '\u2190'));
+    hint.appendChild(el('b', 'sb-kbd', '\u2192'));
+    hint.appendChild(el('span', null, 'step'));
+    footEl.appendChild(hint);
     footEl.appendChild(btn('Exit present', 'sb-btn', close));
   }
 
@@ -803,11 +1053,12 @@
       '<tr><td>Ctrl / Cmd + K</td><td>Search everything</td></tr>' +
       '<tr><td>q</td><td>Quiz on this diagram</td></tr>' +
       '<tr><td>n</td><td>Notes</td></tr>' +
-      '<tr><td>p</td><td>Presentation mode</td></tr>' +
+      '<tr><td>p</td><td>Presentation stage: the guided view with narration and a card per node</td></tr>' +
       '<tr><td>g</td><td>Glossary</td></tr>' +
       '<tr><td>t</td><td>Troubleshooting</td></tr>' +
       '<tr><td>i</td><td>Interview bank</td></tr>' +
       '<tr><td>c</td><td>Code lab: concepts, mirrored source and walkthroughs</td></tr>' +
+      '<tr><td>&larr; &rarr; Space</td><td>Step back / forward through Present mode; Home and End jump to the ends</td></tr>' +
       '<tr><td>Esc</td><td>Close</td></tr>' +
       '</tbody>';
     s.appendChild(tb);
@@ -827,7 +1078,7 @@
     sc.appendChild(el('div', 'sb-h-s', 'The Book Store project is mirrored into this page, so you can read real source without leaving the diagram. Every code reference - a chip in a node card, a row in the code lab, a walkthrough step, a quiz citation - opens the same in-page viewer: a header with the file\u2019s role and shape, a structure outline you can jump through, the whole file with syntax highlighting, and the lines that matter carrying their explanation beside them. Diagrams that have a walkthrough get a Walk through button in the toolbar: step through the source with the matching database query count or transaction report beside each step. If a generated asset is missing the viewer says which script to rebuild it, rather than sending you to a raw text dump.'));
     bodyEl.appendChild(sc);
     var s2 = section('In the diagram');
-    s2.appendChild(el('div', 'sb-h-s', 'Hover or tab-focus any node or relationship for the semantic passport. Concept chips inside the card jump to the same idea in other diagrams. In presentation mode the other nodes dim so you can walk a guided view.'));
+    s2.appendChild(el('div', 'sb-h-s', 'Hover or tab-focus any node or relationship for the semantic passport. Concept chips inside the card jump to the same idea in other diagrams. Press P for the presentation stage: the diagram takes the whole screen, the step you are on stays lit while the rest falls away, and the rail on the right carries the narration, a passport card for every node in the step, how those nodes connect and the concepts they belong to. The step rail in the panel header jumps anywhere, Auto plays the walk on its own, and the arrows or Space step forward.'));
     bodyEl.appendChild(s2);
     clear(footEl);
     footEl.appendChild(btn('Done', 'sb-btn is-primary', close));
@@ -1530,7 +1781,7 @@
     }
     bar.appendChild(barBtn('Quiz', 'Q', function () { open('quiz'); }));
     bar.appendChild(barBtn('Notes', 'N', function () { open('notes', state.lastNode || 'GLOBAL'); }));
-    bar.appendChild(barBtn('Present', 'P', function () { if (presentState.on) stopPresent(); startPresent(0); }));
+    bar.appendChild(barBtn('Present', 'P', function () { if (presentState.on) close(); else startPresent(0); }));
     bar.appendChild(barBtn('Terms', 'G', function () { open('glossary'); }));
     bar.appendChild(barBtn('Debug', 'T', function () { open('trouble'); }));
     bar.appendChild(barBtn('Interview', 'I', function () { open('interview'); }));
@@ -1580,8 +1831,10 @@
       }
       if (typing(e) || e.ctrlKey || e.metaKey || e.altKey) return;
       var k = e.key.toLowerCase();
-      if (view === 'present' && (k === 'arrowright' || k === ' ' || k === 'p')) { e.preventDefault(); presentState.i++; render(); return; }
-      if (view === 'present' && k === 'arrowleft') { e.preventDefault(); presentState.i--; render(); return; }
+      if (view === 'present' && (k === 'arrowright' || k === ' ' || k === 'p')) { e.preventDefault(); stepTo(presentState.i + 1, true); return; }
+      if (view === 'present' && k === 'arrowleft') { e.preventDefault(); stepTo(presentState.i - 1, true); return; }
+      if (view === 'present' && k === 'home') { e.preventDefault(); stepTo(0, true); return; }
+      if (view === 'present' && k === 'end') { e.preventDefault(); stepTo(presentSteps().length - 1, true); return; }
       if (view) return;
       if (k === 'q') { e.preventDefault(); open('quiz'); }
       else if (k === 'n') { e.preventDefault(); open('notes', state.lastNode || 'GLOBAL'); }
