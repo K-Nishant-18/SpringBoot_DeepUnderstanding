@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kaise Use Karein - Spring Boot Diagram Atlas ka Complete Guide (Hinglish)</title>
+<meta name="description" content="Is platform ko 100% kaise istemal karein: navigation, har functionality, keyboard shortcuts, best practices aur 30-din ka study plan - sab Hinglish mein.">
+<link rel="stylesheet" href="sbkit.css">
+<style>
+  :root {
+    --bg: #020617; --panel: rgba(15,23,42,.5); --panel-border: #1e293b;
+    --text: #ffffff; --text-muted: #94a3b8; --text-dim: #64748b;
+    --accent: #34d399; --amber: #fbbf24; --sky: #38bdf8; --violet: #a78bfa; --rose: #fb7185;
+    --toolbar-bg: rgba(15,23,42,.88);
+  }
+  [data-theme="light"] {
+    --bg: #f8fafc; --panel: rgba(255,255,255,.75); --panel-border: #cbd5e1;
+    --text: #0f172a; --text-muted: #475569; --text-dim: #64748b;
+    --accent: #059669; --amber: #b45309; --sky: #0369a1; --violet: #7c3aed; --rose: #e11d48;
+    --toolbar-bg: rgba(255,255,255,.92);
+  }
+  html[data-theme="dark"] { background: #020617; color-scheme: dark; }
+  html[data-theme="light"] { background: #f8fafc; color-scheme: light; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font: 15.5px/1.62 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 22px; }
+  code, kbd, .mono { font-family: var(--sb-mono, ui-monospace, "Cascadia Mono", Consolas, monospace); }
+
+  header.top {
+    position: sticky; top: 0; z-index: 40;
+    background: color-mix(in srgb, var(--bg) 86%, transparent);
+    backdrop-filter: blur(12px); border-bottom: 1px solid var(--panel-border);
+  }
+  .top-in { display: flex; align-items: center; gap: 14px; padding: 11px 0; flex-wrap: wrap; }
+  .brand { display: flex; align-items: baseline; gap: 9px; margin: 0; font-size: 16px; font-weight: 800; }
+  .brand span { font: 600 10px/1 var(--sb-mono, monospace); text-transform: uppercase; letter-spacing: .1em; color: var(--accent); border: 1px solid currentColor; border-radius: 999px; padding: 4px 7px; }
+  .spacer { flex: 1; }
+  .sb-btn { padding: 7px 12px; border-radius: 8px; font-size: 12.5px; font-weight: 650; cursor: pointer; background: var(--panel); border: 1px solid var(--panel-border); color: var(--text); }
+  .sb-btn:hover { border-color: var(--accent); }
+  .sb-btn.is-primary { background: color-mix(in srgb, var(--accent) 18%, transparent); border-color: var(--accent); color: var(--text); }
+
+  /* ---------- hero ---------- */
+  .hero { position: relative; padding: 56px 0 34px; overflow: hidden; }
+  .hero::before {
+    content: ""; position: absolute; inset: -40% -10% auto; height: 460px; pointer-events: none;
+    background:
+      radial-gradient(600px 240px at 18% 30%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 70%),
+      radial-gradient(520px 220px at 82% 10%, color-mix(in srgb, var(--sky) 16%, transparent), transparent 70%),
+      radial-gradient(420px 200px at 55% 75%, color-mix(in srgb, var(--violet) 14%, transparent), transparent 70%);
+    filter: blur(6px);
+  }
+  .hero > * { position: relative; }
+  .eyebrow { font: 700 11px/1 var(--sb-mono, monospace); text-transform: uppercase; letter-spacing: .18em; color: var(--accent); }
+  h1 { font-size: clamp(30px, 5.4vw, 46px); line-height: 1.1; letter-spacing: -.025em; margin: 14px 0 14px; font-weight: 850; }
+  h1 em { font-style: normal; background: linear-gradient(100deg, var(--accent), var(--sky) 55%, var(--violet)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .lead { font-size: 16.5px; color: var(--text-muted); max-width: 76ch; margin: 0 0 22px; }
+  .cta { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 26px; }
+
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(112px, 1fr)); gap: 9px; }
+  .stat { padding: 12px 13px; border-radius: 12px; background: var(--panel); border: 1px solid var(--panel-border); }
+  .stat b { display: block; font-size: 22px; font-weight: 850; letter-spacing: -.02em; color: var(--accent); font-variant-numeric: tabular-nums; }
+  .stat span { font-size: 10.5px; color: var(--text-muted); text-transform: uppercase; letter-spacing: .07em; font-weight: 650; }
+
+  /* ---------- pill nav ---------- */
+  .pillnav { position: sticky; top: 53px; z-index: 30; padding: 10px 0; background: color-mix(in srgb, var(--bg) 90%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--panel-border); }
+  .pillnav .in { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+  .pillnav .in::-webkit-scrollbar { display: none; }
+  .pillnav a { flex: none; padding: 6px 11px; border-radius: 999px; font-size: 12.5px; font-weight: 650; color: var(--text-muted); border: 1px solid transparent; white-space: nowrap; }
+  .pillnav a:hover { color: var(--text); background: var(--panel); text-decoration: none; }
+  .pillnav a[data-on] { color: var(--text); background: color-mix(in srgb, var(--accent) 16%, transparent); border-color: var(--accent); }
+
+  /* ---------- sections ---------- */
+  section.sec { padding: 42px 0 6px; scroll-margin-top: 108px; }
+  .sechead { display: flex; align-items: center; gap: 13px; margin-bottom: 8px; }
+  .num { flex: none; font: 800 12px/1 var(--sb-mono, monospace); color: var(--accent); border: 1.5px solid var(--accent); border-radius: 9px; padding: 7px 9px; letter-spacing: .04em; }
+  h2 { font-size: clamp(21px, 3vw, 26px); font-weight: 820; letter-spacing: -.02em; margin: 0; }
+  .sub { color: var(--text-muted); font-size: 14.5px; margin: 0 0 20px; max-width: 80ch; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(288px, 1fr)); gap: 11px; }
+  .card { padding: 15px 16px; border-radius: 14px; background: var(--panel); border: 1px solid var(--panel-border); }
+  .card h3 { margin: 0 0 6px; font-size: 14.5px; font-weight: 750; letter-spacing: -.01em; display: flex; align-items: center; gap: 8px; }
+  .card p { margin: 0; font-size: 13.5px; color: var(--text-muted); line-height: 1.56; }
+  .card p + p { margin-top: 7px; }
+  .dot { flex: none; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+  .dot.a { background: var(--amber); } .dot.s { background: var(--sky); }
+  .dot.v { background: var(--violet); } .dot.r { background: var(--rose); }
+
+  kbd { display: inline-block; font: 650 11.5px/1.35 var(--sb-mono, monospace); padding: 3px 6px; border-radius: 6px; background: color-mix(in srgb, var(--text-dim) 16%, transparent); border: 1px solid var(--panel-border); border-bottom-width: 2px; color: var(--text); white-space: nowrap; }
+  .inline-code { font: 600 12.5px/1.4 var(--sb-mono, monospace); padding: 2px 6px; border-radius: 6px; background: color-mix(in srgb, var(--sky) 14%, transparent); color: var(--sky); white-space: nowrap; }
+
+  /* ordered steps */
+  .steps { list-style: none; counter-reset: st; padding: 0; margin: 0; display: grid; gap: 10px; }
+  .steps li { counter-increment: st; position: relative; padding: 14px 16px 14px 54px; border-radius: 13px; background: var(--panel); border: 1px solid var(--panel-border); }
+  .steps li::before {
+    content: counter(st); position: absolute; left: 14px; top: 13px;
+    width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center;
+    font: 800 12.5px/1 var(--sb-mono, monospace); color: #020617;
+    background: linear-gradient(140deg, var(--accent), var(--sky));
+  }
+  .steps li b { display: block; font-size: 14.5px; margin-bottom: 3px; }
+  .steps li span { display: block; font-size: 13.5px; color: var(--text-muted); line-height: 1.55; }
+
+  /* callouts */
+  .note { padding: 13px 16px; border-radius: 12px; background: var(--panel); border: 1px solid var(--panel-border); border-left: 3px solid var(--accent); font-size: 13.5px; color: var(--text-muted); margin-top: 12px; }
+  .note b { color: var(--text); }
+  .note.warn { border-left-color: var(--amber); }
+  .note.warn b { color: var(--amber); }
+  .note.tip { border-left-color: var(--sky); }
+  .note.tip b { color: var(--sky); }
+
+  /* tables */
+  table.tbl { width: 100%; border-collapse: collapse; font-size: 13.5px; background: var(--panel); border: 1px solid var(--panel-border); border-radius: 13px; overflow: hidden; }
+  table.tbl th, table.tbl td { text-align: left; padding: 10px 13px; border-bottom: 1px solid var(--panel-border); vertical-align: top; }
+  table.tbl th { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--text-dim); font-weight: 750; background: color-mix(in srgb, var(--text-dim) 8%, transparent); }
+  table.tbl tr:last-child td { border-bottom: 0; }
+  table.tbl td.k { width: 190px; white-space: nowrap; }
+  table.tbl td.d { color: var(--text-muted); }
+
+  /* route / timeline */
+  .route { display: grid; gap: 10px; }
+  .stop { display: grid; grid-template-columns: 62px 1fr; gap: 14px; align-items: start; }
+  .stop .day { font: 800 11.5px/1.4 var(--sb-mono, monospace); color: var(--accent); text-align: right; padding-top: 13px; }
+  .stop .body { padding: 13px 16px; border-radius: 13px; background: var(--panel); border: 1px solid var(--panel-border); border-left: 3px solid var(--accent); }
+  .stop .body b { display: block; font-size: 14.5px; margin-bottom: 4px; }
+  .stop .body span { font-size: 13.5px; color: var(--text-muted); line-height: 1.55; }
+  .stop:nth-child(3n+2) .body { border-left-color: var(--sky); } .stop:nth-child(3n+2) .day { color: var(--sky); }
+  .stop:nth-child(3n) .body { border-left-color: var(--violet); } .stop:nth-child(3n) .day { color: var(--violet); }
+  @media (max-width: 620px) { .stop { grid-template-columns: 1fr; gap: 5px; } .stop .day { text-align: left; padding-top: 0; } }
+
+  /* map of the hub */
+  .map { display: grid; grid-template-columns: repeat(auto-fill, minmax(168px, 1fr)); gap: 9px; }
+  .map .m { padding: 12px 13px; border-radius: 12px; background: var(--panel); border: 1px solid var(--panel-border); }
+  .map .m b { display: block; font-size: 13.5px; margin-bottom: 3px; }
+  .map .m span { font-size: 12.5px; color: var(--text-muted); line-height: 1.5; }
+  .map .m kbd { margin-bottom: 7px; }
+
+  .split { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; }
+  footer.foot { margin-top: 48px; border-top: 1px solid var(--panel-border); padding: 24px 0 46px; color: var(--text-dim); font-size: 13px; }
+  footer.foot a { color: var(--text-muted); }
+  footer.foot .fl { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 8px; }
+  .hr { height: 1px; background: var(--panel-border); margin: 30px 0 0; }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap top-in">
+    <h1 class="brand">Spring Boot Diagram Atlas <span>Guide</span></h1>
+    <div class="spacer"></div>
+    <a class="sb-btn" href="index.html">Hub kholo</a>
+    <a class="sb-btn" href="Spring_Boot_Roadmap.html">Roadmap</a>
+    <button class="sb-btn is-primary" id="theme">Theme</button>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="hero">
+    <div class="eyebrow">Poora platform, ek hi page pe</div>
+    <h1>Is project ko <em>100% kaise use</em> karein<br>aur maximum benefit lein</h1>
+    <p class="lead">
+      Ye ek offline study platform hai: 21 interactive diagrams, 196 nodes, 61 guided views, 128 quiz questions,
+      47 debugging entries, 74 interview questions, 96 glossary terms, 30 cross-linked concepts, live capture hue API
+      responses, aur ek chalne wala Spring Boot project - sab ek folder mein. Server ki zaroorat nahi, internet ki
+      zaroorat nahi. <b style="color:var(--text)">Bas <code class="inline-code">index.html</code> double-click karo.</b>
+      Ye guide batayegi ki kahan start karein, har button kya karta hai, kaun sa shortcut kaam aayega, aur kis
+      sequence mein padhne se sabse zyada fayda hoga.
+    </p>
+    <div class="cta">
+      <a class="sb-btn is-primary" href="#s02">Shuruaat yahan se karein</a>
+      <a class="sb-btn" href="#s09">Shortcut cheat sheet</a>
+      <a class="sb-btn" href="#s11">30-din ka plan</a>
+    </div>
+    <div class="stats">
+      <div class="stat"><b>21</b><span>diagrams</span></div>
+      <div class="stat"><b>196</b><span>nodes</span></div>
+      <div class="stat"><b>61</b><span>guided views</span></div>
+      <div class="stat"><b>128</b><span>quiz items</span></div>
+      <div class="stat"><b>47</b><span>debug entries</span></div>
+      <div class="stat"><b>74</b><span>interview Qs</span></div>
+      <div class="stat"><b>96</b><span>glossary terms</span></div>
+      <div class="stat"><b>30</b><span>shared concepts</span></div>
+    </div>
+  </div>
+</div>
+
+<nav class="pillnav" id="pillnav">
+  <div class="wrap in">
+    <a href="#s01">01 Kya hai</a>
+    <a href="#s02">02 Start kahan se</a>
+    <a href="#s03">03 Hub navigation</a>
+    <a href="#s04">04 Diagram anatomy</a>
+    <a href="#s05">05 Search</a>
+    <a href="#s06">06 Code lab</a>
+    <a href="#s07">07 Practice tools</a>
+    <a href="#s08">08 Progress &amp; settings</a>
+    <a href="#s09">09 Shortcuts</a>
+    <a href="#s10">10 Best practices</a>
+    <a href="#s11">11 30-din plan</a>
+    <a href="#s12">12 Book Store</a>
+    <a href="#s13">13 Aksar ki galtiyan</a>
+    <a href="#s14">14 Advanced</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <!-- 01 -->
+  <section class="sec" id="s01">
+    <div class="sechead"><span class="num">01</span><h2>Ye platform hai kya, aur kaise chalta hai</h2></div>
+    <p class="sub">Do minute ka context, taaki aage har cheez samajh aaye.</p>
+    <div class="grid">
+      <div class="card"><h3><i class="dot"></i>Ek folder, koi server nahi</h3>
+        <p>Har diagram ek independent HTML file hai. <code class="inline-code">index.html</code> kholte hi sab kuch load ho jaata hai.
+        <code class="inline-code">file://</code> pe chalta hai - na Node chahiye, na Python, na internet.</p></div>
+      <div class="card"><h3><i class="dot s"></i>Sab kuch generated hai, haath se nahi</h3>
+        <p>Diagram ka data, code links, index aur code mirror sab <code class="inline-code">tools/*.mjs</code> scripts se bante hain.
+        Isliye content kabhi diagram aur real code se drift nahi karta.</p></div>
+      <div class="card"><h3><i class="dot v"></i>Diagram = ek idea</h3>
+        <p>Har page sirf ek cheez sikhata hai: request path, proxy trap, transaction boundary, readiness probe.
+        Ek page = ek mental model. Isliye 21 pages hain, ek bada page nahi.</p></div>
+      <div class="card"><h3><i class="dot a"></i>Real code, real responses</h3>
+        <p>Book Store project ka source page ke andar hi mirror hota hai, aur API responses ek baar live capture kiye gaye hain -
+        N+1 ka 18 queries vs 1, transaction modes ka 201/409. Sab proof ke saath.</p></div>
+      <div class="card"><h3><i class="dot r"></i>Sab kuch browser mein rehta hai</h3>
+        <p>Quiz score, notes, progress - sab <code class="inline-code">localStorage</code> mein, sirf isi browser mein.
+        Kuch upload nahi hota. Progress tab se ek click mein reset bhi ho jaata hai.</p></div>
+      <div class="card"><h3><i class="dot"></i>Offline bhi, print bhi</h3>
+        <p>Theme toggle aur Print button dono kaam karte hain, isliye poori revision ek PDF mein export karke le sakte ho.</p></div>
+    </div>
+  </section>
+
+  <!-- 02 -->
+  <section class="sec" id="s02">
+    <div class="sechead"><span class="num">02</span><h2>Pehla kadam - shuruaat kahan se karein</h2></div>
+    <p class="sub">Order matter karta hai. Neeche ka sequence isliye banaya gaya hai kyunki aage wale diagrams pehle wale ke bina meaningful nahi lagte.</p>
+    <ol class="steps">
+      <li><b><code class="inline-code">index.html</code> kholo, Home tab pe raho</b>
+        <span>Upar stats dikhenge (21 diagrams, 196 nodes, 61 views...), neeche "Start here: the roadmap" card. Isi pe click karo.</span></li>
+      <li><b>Roadmap diagram padho - 15 minute</b>
+        <span><a href="Spring_Boot_Roadmap.html">Spring_Boot_Roadmap.html</a> chhe hisson mein poori journey dikhata hai. Abhi detail mein mat jaao, sirf "kaun sa topic kab aayega" wala map banao.</span></li>
+      <li><b>Hub ke <a href="index.html#tracks">Tracks</a> tab pe jao</b>
+        <span>Chhe tracks hain: Foundations, How it works, Data and persistence, Security, Running it, Hardening.
+        Har track ke andar diagrams sequence mein diye hain - upar se neeche jaao. Track ke saamne progress bar hai.</span></li>
+      <li><b>Pehla real diagram: Request Path</b>
+        <span>Browser se SQL tak ka poora safar. Yahi wo diagram hai jisse baaki sab samajh aana shuru hota hai. Node pe hover karo, passport padho.</span></li>
+      <li><b>Har diagram ke baad <kbd>Q</kbd> dabao</b>
+        <span>Quiz sirf usi diagram ke sawaal dikhata hai. Galat jawab ka explanation khud aata hai, plus "Walk through" aur source link - wahi se seedha code pe jump karo.</span></li>
+      <li><b><kbd>N</kbd> se note likho</b>
+        <span>Jo cheez baar baar bhoolte ho, usi node pe note likh do. Notes progress ke saath browser mein save rehte hain - interview revision ke liye yahi kaam aayega.</span></li>
+    </ol>
+    <div class="note tip"><b>Tip:</b> Ek baar mein saare 21 diagrams mat kholo. Ek track khatam karo, quiz clear karo, tabhi agla track shuru karo. Warna information overload ho jaayega aur retention zero.</div>
+  </section>
+
+  <!-- 03 -->
+  <section class="sec" id="s03">
+    <div class="sechead"><span class="num">03</span><h2>Hub navigation - chhe tabs, kaam kya hai</h2></div>
+    <p class="sub"><code class="inline-code">index.html</code> khud ek dashboard hai. Upar wali bar mein chhe tabs hain, aur keyboard se bhi ja sakte ho.</p>
+    <div class="map">
+      <div class="m"><kbd>1</kbd><b>Home</b><span>Stats, "start here" cards, aur chhe how-to cards.</span></div>
+      <div class="m"><kbd>2</kbd><b>Tracks</b><span>Chhe learning tracks, progress bar ke saath. Yahi se padhne ka order milta hai.</span></div>
+      <div class="m"><kbd>3</kbd><b>Library</b><span>Saare 21 diagrams ek grid mein - type (workflow/sequence/architecture...) ke tag ke saath.</span></div>
+      <div class="m"><kbd>4</kbd><b>Practice</b><span>Quiz picker, debugging table, interview bank, glossary - chaaron ek jagah.</span></div>
+      <div class="m"><kbd>5</kbd><b>Concepts</b><span>30 shared concepts, jinme se har ek batata hai wo kis-kis diagram mein aata hai.</span></div>
+      <div class="m"><kbd>6</kbd><b>Progress</b><span>Diagram-wise: opened, quiz score, notes count, aur ek progress bar.</span></div>
+    </div>
+    <div class="grid" style="margin-top:12px">
+      <div class="card"><h3><i class="dot s"></i>Home ke cards</h3>
+        <p>Har card ek specific entry point hai - roadmap, request path, proxy trap, N+1, observability, aur Book Store project.
+        "How to use it" section ke chhe cards har functionality ka one-liner explanation dete hain.</p></div>
+      <div class="card"><h3><i class="dot a"></i>Practice tab asal doston ke liye</h3>
+        <p>Yahan se quiz picker khulta hai: diagram choose karo, uske saare questions ek saath solve karo.
+        Debugging table 47 entries hai - symptom pehle, phir cause, phir fix.</p></div>
+      <div class="card"><h3><i class="dot v"></i>Concepts tab = sideways linking</h3>
+        <p>Jaise "self-invocation" concept AOP, AntiPatterns aur Transactions teeno mein hai. Concept card kholo aur teeno jagah ek click pe dekho.
+        Yahi wo jagah hai jahan se ek trap ko teen angle se samajh aata hai.</p></div>
+    </div>
+  </section>
+
+  <!-- 04 -->
+  <section class="sec" id="s04">
+    <div class="sechead"><span class="num">04</span><h2>Diagram page ki anatomy</h2></div>
+    <p class="sub">Koi bhi diagram kholo, interface hamesha same rahega. Ek baar samajh lo, 21on pages pe kaam aa jaayega.</p>
+    <div class="grid">
+      <div class="card"><h3><i class="dot"></i>Hover / Tab = semantic passport</h3>
+        <p>Kisi bhi node ya relationship pe hover karo (ya keyboard se Tab se uspe focus lo) - ek card khulta hai jismein
+        summary aur teen specific points hoti hain. Ye ratne wala content nahi, samajhne wala content hai.</p></div>
+      <div class="card"><h3><i class="dot s"></i>Concept chips = sideways jump</h3>
+        <p>Passport ke andar agar concept chips dikhein, matlab ye idea doosre diagrams mein bhi hai. Chip pe click karo -
+        wahi concept us angle se khul jaata hai.</p></div>
+      <div class="card"><h3><i class="dot v"></i>Code chips = seedha source</h3>
+        <p>Passport mein jo file ka chip hota hai, wo us node ka real code dikhata hai - in-page viewer mein, naye tab mein nahi.</p></div>
+      <div class="card"><h3><i class="dot a"></i>Guided views + Present mode</h3>
+        <p>Har diagram mein 0-3 guided views hain. <kbd>P</kbd> dabao: baaki nodes dim ho jaate hain, sirf focus wale bright rehte hain,
+        neeche narration aata hai. <kbd>&rarr;</kbd>, <kbd>Space</kbd> ya <kbd>P</kbd> se aage, <kbd>&larr;</kbd> se peeche.</p></div>
+      <div class="card"><h3><i class="dot r"></i>Upar ki toolbar</h3>
+        <p>Search, Walk through, Code lab, Quiz, Notes, Present, Terms, Debug, Interview, Hub - sab ek click door.
+        Har button ke saath uska shortcut bhi likha hota hai.</p></div>
+      <div class="card"><h3><i class="dot"></i>Deep links</h3>
+        <p>Koi page aise bhi khulta hai: <code class="inline-code">...html#node=query101</code> (specific node pe focus)
+        ya <code class="inline-code">...html#view=quiz</code> (turant quiz panel). Notes ya apne bookmarks mein aise links rakho.</p></div>
+    </div>
+    <div class="note"><b>Keyboard-first chalo:</b> Mouse ki zaroorat hi nahi. <kbd>Tab</kbd> se node-to-node,
+    <kbd>Enter</kbd> se detail, <kbd>Esc</kbd> se band. Screen reader users ke liye har node ka ARIA label bhi defined hai.</div>
+  </section>
+
+  <!-- 05 -->
+  <section class="sec" id="s05">
+    <div class="sechead"><span class="num">05</span><h2>Search - <kbd>Ctrl</kbd>+<kbd>K</kbd> (ya <kbd>?</kbd> for help)</h2></div>
+    <p class="sub">Ye sabse underused feature hai. Poora content ek hi search box mein, grouped results ke saath.</p>
+    <table class="tbl">
+      <thead><tr><th>Search kya dhoondta hai</th><th>Example query</th></tr></thead>
+      <tbody>
+        <tr><td class="k">Diagrams</td><td class="d"><code class="inline-code">transaction</code>, <code class="inline-code">cache</code></td></tr>
+        <tr><td class="k">Nodes (196)</td><td class="d"><code class="inline-code">rollback</code>, <code class="inline-code">readiness</code>, <code class="inline-code">join fetch</code></td></tr>
+        <tr><td class="k">Relationships (209)</td><td class="d">edge labels, jaise proxy &rarr; target</td></tr>
+        <tr><td class="k">Guided views (61)</td><td class="d"><code class="inline-code">propagation</code>, <code class="inline-code">stale</code></td></tr>
+        <tr><td class="k">Concepts (30)</td><td class="d"><code class="inline-code">self-invocation</code>, <code class="inline-code">N+1</code></td></tr>
+        <tr><td class="k">Glossary (96 terms)</td><td class="d"><code class="inline-code">proxy</code>, <code class="inline-code">outbox</code></td></tr>
+        <tr><td class="k">Troubleshooting (47)</td><td class="d"><code class="inline-code">UnexpectedRollback</code>, <code class="inline-code">404</code></td></tr>
+        <tr><td class="k">Interview (74)</td><td class="d"><code class="inline-code">propagation</code>, <code class="inline-code">lazy</code></td></tr>
+      </tbody>
+    </table>
+    <div class="note tip"><b>Kaise use karein:</b> Multiple words daalo - har word ko AND ki tarah treat kiya jaata hai
+    (<code class="inline-code">n+1 join fetch</code> better hai sirf <code class="inline-code">n+1</code> se).
+    Result pe Enter = seedha wahan jump. <kbd>Esc</kbd> se band.</div>
+  </section>
+
+  <!-- 06 -->
+  <section class="sec" id="s06">
+    <div class="sechead"><span class="num">06</span><h2>Code lab - theory ko actual code se jodo</h2></div>
+    <p class="sub">Ye wo jagah hai jahan diagram "proof" mein badalta hai. Shortcut <kbd>C</kbd>.</p>
+    <div class="grid">
+      <div class="card"><h3><i class="dot"></i>Code lab panel (<kbd>C</kbd>)</h3>
+        <p>Diagram ka overview, uske shared concepts, guided views, aur "Runnable code in Book Store" ki list -
+        har file ke saath "in page" badge. Neeche Walk through aur captured response ke buttons.</p></div>
+      <div class="card"><h3><i class="dot s"></i>Source viewer</h3>
+        <p>Har code link ek hi page andar khulta hai: upar file ka role badge, path aur summary; uske neeche
+        <b>structure outline</b> (class/method/field chips) jinpe click karke seedha line pe jump karo; phir poora file
+        syntax highlighting ke saath; aur jo lines explained hain, unke saath unka explanation.</p></div>
+      <div class="card"><h3><i class="dot v"></i>Walk through (walkthrough)</h3>
+        <p>N+1 aur Transactions diagrams pe toolbar mein "Walk through" button hai. Har step mein source ke saath
+        us waqt ka <b>database query count</b> ya <b>transaction report</b> side by side hota hai. Step by step
+        dekho ki 1 query kaise 18 ban jaati hai.</p></div>
+      <div class="card"><h3><i class="dot a"></i>Captured responses (evidence)</h3>
+        <p>Ye screenshot nahi, ek baar live app chala kar capture kiye gaye real HTTP responses hain:
+        join-fetch = 1 query aur payload byte-identical, <code class="inline-code">mode=required</code> / <code class="inline-code">requires-new</code> = 201,
+        <code class="inline-code">mode=poison</code> = 409 rollback.</p></div>
+    </div>
+    <div class="note warn"><b>Dhyan do:</b> Koi bhi code reference kabhi raw text dump nahi dikhata.
+        Agar kisi file ka mirror missing ho, viewer khud batata hai ki kaunsi script chalani hai
+        (<code class="inline-code">node tools/build-code-viewer.mjs</code>) - aapko kahin aur redirect nahi kiya jaata.</div>
+  </section>
+
+  <!-- 07 -->
+  <section class="sec" id="s07">
+    <div class="sechead"><span class="num">07</span><h2>Practice tools - Quiz, Notes, Glossary, Debug, Interview</h2></div>
+    <p class="sub">Ye paanch cheezein hi asal "padhna" ko "yaad rakhna" mein badalti hain. Har ek ka apna shortcut hai.</p>
+    <table class="tbl">
+      <thead><tr><th>Tool</th><th>Shortcut</th><th>Kya karta hai aur kaise use karein</th></tr></thead>
+      <tbody>
+        <tr><td class="k">Quiz</td><td class="k"><kbd>Q</kbd></td>
+          <td class="d">128 items, har diagram ke apne questions. Score meter upar chalta hai. Galat jawab pe
+          <b>explanation + Walk through + captured response + source link</b> aata hai - yahi se seekhne ka asli flow hai.
+          <code class="inline-code">missed</code> questions track hote hain.</td></tr>
+        <tr><td class="k">Notes</td><td class="k"><kbd>N</kbd></td>
+          <td class="d">Jo node aapne last hover kiya tha, usi pe note. Ya diagram-level note. "All notes" section mein
+          saare notes ek jagah, har ek ke saath "Open diagram" link. Copy button se bahar bhi le ja sakte ho.</td></tr>
+        <tr><td class="k">Glossary</td><td class="k"><kbd>G</kbd></td>
+          <td class="d">96 terms, searchable. Interview se pehle ek baar poori glossary padh lo - definitions tight ho jaati hain.</td></tr>
+        <tr><td class="k">Debug table</td><td class="k"><kbd>T</kbd></td>
+          <td class="d">47 entries: <b>symptom &rarr; likely cause &rarr; concrete fix</b>. Ratne ke liye nahi - jab production
+          pe kuch toote, tab symptom se uthao. Filter box se turant dhundh lo.</td></tr>
+        <tr><td class="k">Interview bank</td><td class="k"><kbd>I</kbd></td>
+          <td class="d">74 questions - junior (14), mid (33), senior (27). Har question pe "Show answer" hai.
+          Best use: answer khud bolo, phir reveal karo, phir apne aap ko mark karo.</td></tr>
+        <tr><td class="k">Help</td><td class="k"><kbd>?</kbd></td>
+          <td class="d">Shortcut list + code lab ka explanation, agar kabhi bhool jaao.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 08 -->
+  <section class="sec" id="s08">
+    <div class="sechead"><span class="num">08</span><h2>Progress, theme, print - apna setup banao</h2></div>
+    <div class="split">
+      <div class="card"><h3><i class="dot"></i>Progress tab</h3>
+        <p>Diagram-wise table: opened hai ya nahi, quiz kitne right, kitne notes, aur ek bar jo teenon ko jod kar
+        dikhata hai (34% opened + 33% quiz + 33% notes). Track tab mein har track ke upar apna progress bar hai.</p>
+        <p><b>Reset all progress</b> sab kuch ek saath mita deta hai - Progress tab ke neeche.</p></div>
+      <div class="card"><h3><i class="dot s"></i>Sab kuch local hai</h3>
+        <p><code class="inline-code">sbk.v1.progress</code>, <code class="inline-code">sbk.v1.quiz</code>,
+        <code class="inline-code">sbk.v1.notes</code> - teen keys, sab browser ke <code class="inline-code">localStorage</code> mein.
+        Koi account nahi, koi server call nahi. Doosre browser/machine pe progress nahi jaayega.</p></div>
+      <div class="card"><h3><i class="dot v"></i>Theme</h3>
+        <p>Header mein <b>Theme</b> button - dark/light. Choice <code class="inline-code">sbk.theme</code> mein save hoti hai,
+        agli baar bhi wahi rahegi. Raat ko padhne ke liye light theme, din mein dark - jo aankhon ko sahi lage.</p></div>
+      <div class="card"><h3><i class="dot a"></i>Print / PDF export</h3>
+        <p>Header ka <b>Print</b> button (ya Progress tab ka <b>Print / export this page</b>) browser print dialogue kholta hai -
+        PDF banake interview se pehle ki revision ke liye rakh lo.</p></div>
+    </div>
+  </section>
+
+  <!-- 09 -->
+  <section class="sec" id="s09">
+    <div class="sechead"><span class="num">09</span><h2>Keyboard cheat sheet</h2></div>
+    <p class="sub">Ye table ek baar rat lo - baaki sab apne aap fast ho jaayega. Sabhi shortcuts kisi bhi diagram page pe kaam karte hain.</p>
+    <table class="tbl">
+      <thead><tr><th>Key</th><th>Kya kholta hai</th></tr></thead>
+      <tbody>
+        <tr><td class="k"><kbd>Ctrl</kbd> / <kbd>Cmd</kbd> + <kbd>K</kbd></td><td class="d">Search - poora content (diagrams, nodes, concepts, glossary, debug, interview)</td></tr>
+        <tr><td class="k"><kbd>Q</kbd></td><td class="d">Quiz - isi diagram ke sawaal, score ke saath</td></tr>
+        <tr><td class="k"><kbd>N</kbd></td><td class="d">Notes - last hovered node pe note, plus saare purane notes</td></tr>
+        <tr><td class="k"><kbd>P</kbd></td><td class="d">Present mode - guided view, baaki nodes dim</td></tr>
+        <tr><td class="k"><kbd>C</kbd></td><td class="d">Code lab - concepts, mirrored source, walkthroughs</td></tr>
+        <tr><td class="k"><kbd>G</kbd></td><td class="d">Glossary - 96 terms, searchable</td></tr>
+        <tr><td class="k"><kbd>T</kbd></td><td class="d">Debug / troubleshooting - 47 symptom-first entries</td></tr>
+        <tr><td class="k"><kbd>I</kbd></td><td class="d">Interview bank - 74 questions with model answers</td></tr>
+        <tr><td class="k"><kbd>?</kbd></td><td class="d">Help - shortcut list aur code lab explanation</td></tr>
+        <tr><td class="k"><kbd>Esc</kbd></td><td class="d">Koi bhi panel band karo</td></tr>
+        <tr><td class="k"><kbd>&rarr;</kbd> <kbd>Space</kbd> <kbd>&larr;</kbd></td><td class="d">Present mode ke andar aage / peeche</td></tr>
+        <tr><td class="k"><kbd>Tab</kbd></td><td class="d">Node-to-node move, hover passport keyboard se bhi</td></tr>
+        <tr><td class="k"><kbd>1</kbd> - <kbd>6</kbd></td><td class="d">Hub pe tabs: Home, Tracks, Library, Practice, Concepts, Progress</td></tr>
+      </tbody>
+    </table>
+    <div class="note warn"><b>Yaad rakho:</b> Jab bhi kisi input box mein type kar rahe ho, shortcuts kaam nahi karte
+    (varna har "t" se debug panel khul jaata). Pehle <kbd>Esc</kbd> se box se bahar aao.</div>
+  </section>
+
+  <!-- 10 -->
+  <section class="sec" id="s10">
+    <div class="sechead"><span class="num">10</span><h2>Best practices - maximum benefit kaise nikaalein</h2></div>
+    <p class="sub">Ye wo aadatein hain jo is resource ko "ek baar padh liya" aur "interview mein yaad aa gaya" ke beech ka farq banati hain.</p>
+    <div class="grid">
+      <div class="card"><h3><i class="dot"></i>1. Pehle socho, phir hover karo</h3>
+        <p>Node pe hover karne se pehle 5 second khud socho ki uska answer kya hoga. Active recall se retention
+        kai guna badhta hai. Hover card sirf apne answer ko confirm karne ke liye dekho.</p></div>
+      <div class="card"><h3><i class="dot s"></i>2. Har diagram ke baad quiz, bina exception ke</h3>
+        <p>Diagram padhna comfort deta hai, quiz hi gap dikhata hai. Galat jawab ka explanation zaroor padho -
+        wahi wo jagah hai jahan actual misconception milta hai.</p></div>
+      <div class="card"><h3><i class="dot v"></i>3. Notes ko interview-prep banao</h3>
+        <p>Har note ko aise likho jaise ek hafte baad khud ko samjha rahe ho: "REQUIRED vs REQUIRES_NEW ka farq -
+        outer suspend hota hai, isliye..." Ye notes baad mein ek personal cheat sheet ban jaate hain.</p></div>
+      <div class="card"><h3><i class="dot a"></i>4. Concept chips se sideways jao</h3>
+        <p>Jab bhi passport mein concept chip dikhe, uspe click karo. Ek trap ko teen alag angle se dekhna
+        = wo concept genuinely samajh aana. Iske liye Concepts tab bhi hai.</p></div>
+      <div class="card"><h3><i class="dot r"></i>5. Debug table ko symptom se uthao</h3>
+        <p>Ratna band karo. Jab bhi koi error dikhe, <kbd>T</kbd> kholo aur exception ka naam search karo.
+        Cause aur fix dono mil jaate hain. Ye "googling errors" ki aadat ko replace karta hai.</p></div>
+      <div class="card"><h3><i class="dot"></i>6. Interview bank ko mock banao</h3>
+        <p>Seedha answer mat padho. Question suno, 60 second bolo, phir "Show answer" dabao, phir khud ko score karo.
+        Junior &rarr; mid &rarr; senior ka order rakho.</p></div>
+      <div class="card"><h3><i class="dot s"></i>7. Book Store ko chala kar dekho</h3>
+        <p>Theory tab tak yaad rehti hai jab tak code nahi chalaya. N+1 endpoint ko khud curl karo, query count
+        khud dekho. Muscle memory banne mein time lagta hai, isliye ye step skip mat karo.</p></div>
+      <div class="card"><h3><i class="dot v"></i>8. Walkthrough ko "proof" ki tarah dekho</h3>
+        <p>Diagram mein likha hai "1 query becomes 18" - walkthrough mein wahi cheez live query count ke saath
+        dikhti hai. Ye do cheezein ek saath dekhne se concept permanent ho jaata hai.</p></div>
+      <div class="card"><h3><i class="dot a"></i>9. Ek track hi khatam karo</h3>
+        <p>Track ke beech se doosre track pe jump karna sabse bada mistake hai. Track ka progress bar 100% tak le jao,
+        uske baad hi agla track kholo.</p></div>
+      <div class="card"><h3><i class="dot r"></i>10. Spaced repetition - 1 hafte baad wapas</h3>
+        <p>Ek track khatam karke 7 din baad dobara kholo aur sirf quiz do. Jo cheezein ab bhi bhool rahe ho,
+        usi pe note update karo. Progress tab se dikh jaayega kahan kamzor ho.</p></div>
+      <div class="card"><h3><i class="dot"></i>11. Print/PDF le lo</h3>
+        <p>Interview se 2 din pehle poori cheez PDF mein export karke sirf apne notes aur missed quiz questions padho.
+        Screen se zyada effective hai.</p></div>
+      <div class="card"><h3><i class="dot s"></i>12. Concepts ko "ek line mein" bolo</h3>
+        <p>Concepts tab kholo, har concept ko apne shabdon mein ek line mein bolo. Jo na aa sake, wahi dobara padho.
+        Yahi self-test ka sabse tez tareeka hai.</p></div>
+    </div>
+  </section>
+
+  <!-- 11 -->
+  <section class="sec" id="s11">
+    <div class="sechead"><span class="num">11</span><h2>30-din ka study plan</h2></div>
+    <p class="sub">Chhe tracks + practice + hands-on ko ek mahine mein fit karne ka suggested sequence. Speed apne hisaab se lo, order mat badlo.</p>
+    <div class="route">
+      <div class="stop"><div class="day">DIN 1-3</div><div class="body"><b>Foundations (3 diagrams)</b>
+        <span>Roadmap, container aur startup. Yahan se jo vocabulary milegi (bean, context, lifecycle) wo har jagah kaam aayegi. Din 3 ke end mein quiz 100%.</span></div></div>
+      <div class="stop"><div class="day">DIN 4-8</div><div class="body"><b>How it works (5 diagrams)</b>
+        <span>Request path, AOP proxy, layers, configuration precedence, auto-configuration. Ye sabse important track hai - yahi interview ka core hai.</span></div></div>
+      <div class="stop"><div class="day">DIN 9-13</div><div class="body"><b>Data and persistence (4 diagrams)</b>
+        <span>Data model, N+1, Transactions, Caching. N+1 aur Transactions ke walkthrough zaroor chalao - is track ka proof yahi hai.</span></div></div>
+      <div class="stop"><div class="day">DIN 14</div><div class="body"><b>Security (1 diagram)</b>
+        <span>Security + JWT. Chhota track, lekin filter chain samajh aani chahiye. Debug table ke security entries bhi dekh lo.</span></div></div>
+      <div class="stop"><div class="day">DIN 15-18</div><div class="body"><b>Running it (4 diagrams)</b>
+        <span>Observability, async/scheduling, messaging (outbox), deployment. Yahan "production mein kya hota hai" wala mindset banta hai.</span></div></div>
+      <div class="stop"><div class="day">DIN 19-22</div><div class="body"><b>Hardening (4 diagrams)</b>
+        <span>Testing slices, AntiPatterns, migration, roadmap wapas. AntiPatterns ko sabse dhyan se padho - galat cheezein deliberate hain.</span></div></div>
+      <div class="stop"><div class="day">DIN 23-25</div><div class="body"><b>Book Store hands-on</b>
+        <span>Project chalao, N+1 endpoint curl karo, <code class="inline-code">mode=poison</code> ka 409 khud dekho,
+        transaction probe check karo. <kbd>C</kbd> se code lab bhi ek saath khol ke rakho.</span></div></div>
+      <div class="stop"><div class="day">DIN 26-27</div><div class="body"><b>Quiz sweep - 128 items</b>
+        <span>Practice tab se har diagram ka quiz dobara do. Jo miss ho, usi ka note update karo. Target: har diagram 80%+.</span></div></div>
+      <div class="stop"><div class="day">DIN 28-29</div><div class="body"><b>Debug table + Interview bank</b>
+        <span>47 debug entries symptom-wise ek baar padho. Phir 74 interview questions - junior se senior tak, bina answer dekhe.</span></div></div>
+      <div class="stop"><div class="day">DIN 30</div><div class="body"><b>Revision - notes + PDF</b>
+        <span>Apne saare notes ek baar padho, missed quiz questions dohrao, PDF export karo. Ab tum ready ho.</span></div></div>
+    </div>
+  </section>
+
+  <!-- 12 -->
+  <section class="sec" id="s12">
+    <div class="sechead"><span class="num">12</span><h2>Book Store project - chalane ka tareeka</h2></div>
+    <p class="sub">Diagrams ke saath ek chalne wala Spring Boot 3 application hai jismein wahi deliberate mistakes hain jo diagrams sikhate hain.</p>
+    <ol class="steps">
+      <li><b>Folder kholo: <code class="inline-code">bookstore/</code></b>
+        <span>README mein har node id ka mapping hai - kaun sa diagram, kaun sa file. Requirements sirf JDK chahiye.</span></li>
+      <li><b>Test chalao: <code class="inline-code">test.cmd</code></b>
+        <span>Maven wrapper committed hai, isliye <code class="inline-code">mvn</code> PATH pe na ho tab bhi chalega. Expected: 15 tests, 0 failures.</span></li>
+      <li><b>App start karo: <code class="inline-code">run.cmd</code></b>
+        <span>Jar build hokar <code class="inline-code">http://localhost:8080</code> pe chalu ho jaata hai.
+        Health check: <code class="inline-code">/actuator/health</code>.</span></li>
+      <li><b>N+1 ko khud dekho</b>
+        <span><code class="inline-code">/api/catalog/books/naive</code> vs <code class="inline-code">/api/catalog/books/join-fetch</code> -
+        dono ka payload same, query count alag (18 vs 1).</span></li>
+      <li><b>Transaction modes try karo</b>
+        <span><code class="inline-code">mode=required</code> &rarr; 201, <code class="inline-code">mode=requires-new</code> &rarr; 201,
+        <code class="inline-code">mode=poison</code> &rarr; 409 rollback. Wahi numbers jo evidence panel mein capture karke rakhe hain.</span></li>
+      <li><b>Diagram ke saath khol ke rakho</b>
+        <span>Ek taraf diagram, doosri taraf terminal. Jaisa diagram bolta hai, wahi terminal mein hota hai - yahi se confidence aata hai.</span></li>
+    </ol>
+    <div class="note"><b>Project mein jaan-bujhkar rakhi gayi mistakes:</b> self-invocation (advice bypass), N+1 select,
+    rollback-only trap, cache eviction bhool jaana, catch-all exception handler, mutable entities.
+    Inhe "bug" mat samjho - ye teaching material hain. Har ek ke paas uska "fix" bhi pada hai.</div>
+  </section>
+
+  <!-- 13 -->
+  <section class="sec" id="s13">
+    <div class="sechead"><span class="num">13</span><h2>Aksar hone wali galtiyan (aur unka fix)</h2></div>
+    <table class="tbl">
+      <thead><tr><th>Problem</th><th>Fix</th></tr></thead>
+      <tbody>
+        <tr><td class="k">"Sab khol liya, yaad kuch nahi"</td>
+          <td class="d">Aapne read kiya, recall nahi kiya. Har padhne ke baad <kbd>Q</kbd> zaroor do, aur note likho.</td></tr>
+        <tr><td class="k">Diagram ka code link click kiya, text dump khula</td>
+          <td class="d">Ye bug tha aur fix ho chuka hai - ab har link in-page viewer mein khulta hai.
+          Agar aisi cheez dikhe to <code class="inline-code">node tools/build-code-viewer.mjs</code> chalao.</td></tr>
+        <tr><td class="k">Progress nahi dikh raha</td>
+          <td class="d">Progress tab kholo. Agar browser mein data hi nahi, to kisi aur browser/incognito mein the aap -
+          localStorage browser-specific hai.</td></tr>
+        <tr><td class="k">App start nahi ho raha</td>
+          <td class="d">Port 8080 busy hai. Purana process band karo, phir <code class="inline-code">run.cmd</code> dobara chalao.
+          Ya seedha <code class="inline-code">spring-boot:run</code> use karo.</td></tr>
+        <tr><td class="k">Code sample purana lag raha hai</td>
+          <td class="d"><code class="inline-code">node tools/audit-links.mjs</code> chalao - ye har mirrored file ko
+          original se byte-for-byte compare karta hai aur stale hone pe exact file ka naam batata hai.</td></tr>
+        <tr><td class="k">"Kaun sa diagram pehle?"</td>
+          <td class="d">Tracks tab (key <kbd>2</kbd>). Library tab sirf browsing ke liye hai, order ke liye nahi.</td></tr>
+        <tr><td class="k">Shortcuts kaam nahi kar rahe</td>
+          <td class="d">Kisi input box mein focus hai. <kbd>Esc</kbd> dabao, ya mouse se bahar click karo.</td></tr>
+        <tr><td class="k">Interview ke liye sirf diagram enough hain?</td>
+          <td class="d">Diagram samajh deta hai, phrasing nahi. Interview bank (<kbd>I</kbd>) se apni awaaz mein practice karo.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 14 -->
+  <section class="sec" id="s14">
+    <div class="sechead"><span class="num">14</span><h2>Advanced - content badalne wale log ke liye</h2></div>
+    <p class="sub">Agar aap sirf padh rahe ho to ye section chhod do. Agar is resource ko apne liye customize karna hai, to yahi se shuru karo.</p>
+    <div class="grid">
+      <div class="card"><h3><i class="dot"></i>Sab kuch <code class="inline-code">tools/</code> se banta hai</h3>
+        <p><code class="inline-code">build-content-index.mjs</code> (index) &rarr; <code class="inline-code">build-code-viewer.mjs</code> (code mirror)
+        &rarr; <code class="inline-code">enhance-hover.mjs</code> (diagram tags). Order matter karta hai.</p></div>
+      <div class="card"><h3><i class="dot s"></i>Evidence dobara capture karna ho</h3>
+        <p><code class="inline-code">capture-evidence.mjs</code> app khud start karta hai, port 8080 pe jo bhi purana process hai use
+        pehle band karta hai, responses assert karta hai, aur band hone par confirm karta hai. Uske baad
+        <code class="inline-code">build-traces.mjs</code> chalana zaroori hai.</p></div>
+      <div class="card"><h3><i class="dot v"></i>Validation commands</h3>
+        <p><code class="inline-code">audit-links</code>,
+        <code class="inline-code">probe-code-viewer</code>, <code class="inline-code">probe-code-lab</code>,
+        <code class="inline-code">probe-hover</code>, <code class="inline-code">probe-kit</code>,
+        <code class="inline-code">probe-hub</code> - sab <code class="inline-code">node tools/&lt;name&gt;.mjs</code> se chalte hain.</p></div>
+      <div class="card"><h3><i class="dot a"></i>Naya diagram kaise add karein</h3>
+        <p>Pehle HTML banao, phir <code class="inline-code">content-index.js</code> rebuild karo, phir
+        <code class="inline-code">enhance-hover.mjs</code> chalao. Audit khud check kar lega ki har node id,
+        edge aur code link sahi hai.</p></div>
+    </div>
+    <div class="note warn"><b>Mat haath se badlo:</b> <code class="inline-code">evidence.js</code>,
+      <code class="inline-code">code-source.js</code>, <code class="inline-code">content-index.js</code> aur base diagrams
+      ko manually edit mat karna - ye generated hain aur agli run par overwrite ho jaayenge.</div>
+  </section>
+
+  <div class="hr"></div>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <div class="fl">
+      <a href="index.html">Hub / Dashboard</a>
+      <a href="Spring_Boot_Roadmap.html">Roadmap</a>
+      <a href="index.html#tracks">Tracks</a>
+      <a href="index.html#practice">Practice</a>
+      <a href="bookstore/README.md">Book Store README</a>
+      <a href="Spring_Boot_Complete_Notes.docx">Complete notes (docx)</a>
+    </div>
+    <div>Ye guide isi folder ke saath rehta hai - <code class="inline-code">guide.html</code>.
+      Har cheez browser mein, kuch bhi server pe nahi jaata.</div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+
+  /* theme: same key the hub and the kit use, so the guide follows the rest */
+  var KEY = 'sbk.theme';
+  function theme() {
+    var t = 'dark';
+    try { t = localStorage.getItem(KEY) || 'dark'; } catch (e) { /* private mode */ }
+    document.documentElement.setAttribute('data-theme', t);
+    var b = document.getElementById('theme');
+    if (b) b.textContent = t === 'dark' ? 'Light' : 'Dark';
+  }
+  theme();
+  var tb = document.getElementById('theme');
+  if (tb) {
+    tb.addEventListener('click', function () {
+      var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      try { localStorage.setItem(KEY, next); } catch (e) { /* ignore */ }
+      tb.textContent = next === 'dark' ? 'Light' : 'Dark';
+    });
+  }
+
+  /* scroll-spy for the pill nav - highlight the section currently in view */
+  var links = Array.prototype.slice.call(document.querySelectorAll('#pillnav a'));
+  var targets = links.map(function (a) { return document.getElementById(a.getAttribute('href').slice(1)); })
+                     .filter(Boolean);
+  if (!targets.length || !('IntersectionObserver' in window)) return;
+
+  var current = null;
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (!e.isIntersecting) return;
+      var id = e.target.id;
+      if (id === current) return;
+      current = id;
+      links.forEach(function (a) {
+        if (a.getAttribute('href') === '#' + id) a.setAttribute('data-on', '');
+        else a.removeAttribute('data-on');
+      });
+      var active = links.filter(function (a) { return a.hasAttribute('data-on'); })[0];
+      if (active && active.scrollIntoView) active.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
+    });
+  }, { rootMargin: '-110px 0px -65% 0px', threshold: 0 });
+
+  targets.forEach(function (t) { io.observe(t); });
+})();
+</script>
+</body>
+</html>
