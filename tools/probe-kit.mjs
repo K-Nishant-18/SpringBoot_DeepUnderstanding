@@ -175,6 +175,7 @@ try {
   const { targetId } = await send('Target.createTarget', { url: 'about:blank' });
   const { sessionId } = await send('Target.attachToTarget', { targetId, flatten: true });
   await send('Page.enable', {}, sessionId);
+  await send('Page.addScriptToEvaluateOnNewDocument', { source: 'window.SB_TOUR_OFF = true' }, sessionId);
   await send('Runtime.enable', {}, sessionId);
 
   for (const f of files) {

@@ -55,6 +55,7 @@ const evalJs = async (expr) => {
 
 await send('Runtime.enable');
 await send('Page.enable');
+await send('Page.addScriptToEvaluateOnNewDocument', { source: 'window.SB_TOUR_OFF = true' });
 
 const BASE = pathToFileURL(ROOT + '/').href;
 const results = [];
