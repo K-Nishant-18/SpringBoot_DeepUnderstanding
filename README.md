@@ -12,7 +12,7 @@ No install. No server. No internet. Just double-click `index.html`.
 
 [![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.3.5-6DB33F?style=flat&logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot)
 [![Diagrams](https://img.shields.io/badge/diagrams-21-0ea5e9?style=flat)](#whats-inside)
-[![Quiz](https://img.shields.io/badge/quiz%20questions-128-8b5cf6?style=flat)](#what-you-can-do-with-it)
+[![Quiz](https://img.shields.io/badge/quiz%20questions-315-8b5cf6?style=flat)](#what-you-can-do-with-it)
 [![Works offline](https://img.shields.io/badge/works%20offline-yes-22c55e?style=flat)](#what-is-this)
 
 [**Open the hub**](index.html) · [**How to use this**](guide.html) · [Notes (docx)](Spring_Boot_Complete_Notes.docx)
@@ -61,7 +61,7 @@ no database to stand up.
 |---|---|
 | **Learning Spring Boot** | You get the mental model first, in the order that actually builds one — Foundations → How it works → Data → Security → Running it → Hardening. |
 | **Debugging something weird** | 47 symptom-first entries keyed on the error text you actually see in your console, each with the cause and the fix. |
-| **Preparing for interviews** | 74 questions with model answers, plus a quiz attached to every diagram so you find out what you forgot. |
+| **Preparing for interviews** | 154 questions with model answers, plus a quiz attached to every diagram so you find out what you forgot. |
 | **Teaching or onboarding** | Present mode (`P`) opens a stage: the diagram fills the screen under a moving light while a rail on the right carries the narration, one view at a time; the whole thing is one folder you can hand someone. |
 | **Tired of prose** | 96 glossary terms and 30 shared concept cards you can jump to from anywhere — no more re-scrolling a 40-page article. |
 
@@ -91,7 +91,7 @@ mirrored Book Store file — 48 files, 3,732 lines, byte-for-byte from the app.
 **See measured numbers, not made-up ones.** Responses in the diagrams were
 captured from the running application: real query counts, real timings.
 
-**Test yourself.** 128 quiz items, 47 debug entries, 74 interview questions, 96
+**Test yourself.** 315 quiz items, 47 debug entries, 154 interview questions, 96
 glossary terms — all searchable in one keystroke.
 
 ---
@@ -143,9 +143,9 @@ shortcut, best practices, and a 30-day plan.
 |---|---|
 | Interactive diagrams | **21** across **6** learning tracks |
 | Nodes · relationships · guided views | **196** · **209** · **61** |
-| Quiz items | **128** |
+| Quiz items | **315** |
 | Debug / troubleshooting entries | **47** |
-| Interview questions with answers | **74** |
+| Interview questions with answers | **154** |
 | Glossary terms | **96** |
 | Shared concept cards | **30** |
 | Mirrored source files in the code viewer | **48** files · **3,732** lines |
@@ -296,7 +296,7 @@ sbkit.js  sbkit.css                 the shared kit: passport, panels, code lab
 Spring_Boot_*.html                  21 diagrams, self-contained
 content-index.js  code-source.js    generated: search index, 48 mirrored files
 evidence.js  concepts.js            generated: measured responses, 30 concept cards
-study-data.js                       128 quiz · 47 debug · 74 interview · 96 glossary
+study-data.js                       315 quiz · 47 debug · 154 interview · 96 glossary
 bookstore/                          the runnable Spring Boot 3.3.5 companion app
 tools/                              5 builders · 5 probes · 1 audit
 docs/screenshots/                   the images used in this README
