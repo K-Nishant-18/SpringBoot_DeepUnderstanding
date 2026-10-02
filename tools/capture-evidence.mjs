@@ -16,7 +16,7 @@ import { dirname, join } from 'node:path';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 const BOOK = join(ROOT, 'bookstore');
-const OUT = join(ROOT, 'evidence.js');
+const OUT = join(ROOT, 'site', 'evidence.js');
 const JAR = join(BOOK, 'target', 'bookstore-0.0.1-SNAPSHOT.jar');
 const PORT = Number(process.env.PORT || 8080);
 const BASE = `http://localhost:${PORT}`;

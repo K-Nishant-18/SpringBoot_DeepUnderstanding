@@ -5,7 +5,7 @@ import { createContext, runInContext } from 'node:vm';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
-const DIR = ROOT;
+const DIR = join(ROOT, 'site');
 const load = (file, globalName) => {
   const ctx = { window: {} };
   createContext(ctx);
@@ -66,7 +66,7 @@ for (const key of KEYS) {
   for (const c of d.code) {
     links++;
     if (!nodeIds.has(c.node)) note(`${key}: code link targets unknown node ${c.node}`);
-    if (!existsSync(`${DIR}/${c.path.replace(/\//g, '\\')}`)) note(`${key}: code file missing ${c.path}`);
+    if (!existsSync(`${ROOT}/${c.path.replace(/\//g, '\\')}`)) note(`${key}: code file missing ${c.path}`);
   }
 }
 
@@ -100,13 +100,13 @@ for (const t of IDX.tracks) for (const k of t.diagrams) {
 }
 for (const k of KEYS) if (!seen.has(k)) note(`diagram ${k} is not in any track`);
 for (const p of ['bookstore/README.md', 'bookstore/run.cmd', 'bookstore/test.cmd', 'bookstore/pom.xml']) {
-  if (!existsSync(`${DIR}/${p}`)) note(`${p} missing`);
+  if (!existsSync(`${ROOT}/${p}`)) note(`${p} missing`);
 }
-if (existsSync(`${DIR}/bookstore/.stubs`)) note('the removed .stubs tree is back');
+if (existsSync(`${ROOT}/bookstore/.stubs`)) note('the removed .stubs tree is back');
 for (const gone of ['bookstore/verify.cmd', 'bookstore/verify.ps1']) {
-  if (existsSync(`${DIR}/${gone}`)) note(`${gone} should have been removed with the stub harness`);
+  if (existsSync(`${ROOT}/${gone}`)) note(`${gone} should have been removed with the stub harness`);
 }
-const readme = readFileSync(`${DIR}/bookstore/README.md`, 'utf8');
+const readme = readFileSync(`${ROOT}/bookstore/README.md`, 'utf8');
 for (const claim of ['verify.cmd', '.stubs']) {
   if (new RegExp('`' + claim + '`').test(readme.replace(/^.*`verify\.cmd` and the `verify\.\*` scripts.*$/gm, ''))) {
     const remaining = readme.split('\n').filter((l) => l.includes(claim) && !l.includes('removed') && !l.includes('no longer') && !l.includes('used to ship'));
@@ -163,7 +163,7 @@ const SRCW = loadGenerated('code-source.js');
 const SRC = SRCW && SRCW.SB_SOURCE;
 if (SRC && SRC.files) {
   for (const key of Object.keys(SRC.files)) {
-    const disk = `${DIR}/bookstore/${key}`;
+    const disk = `${ROOT}/bookstore/${key}`;
     if (!existsSync(disk)) { noteStale(`code-source.js mirrors ${key}, which no longer exists`); continue; }
     mirrored++;
     if (SRC.files[key].text !== readFileSync(disk, 'utf8')) {

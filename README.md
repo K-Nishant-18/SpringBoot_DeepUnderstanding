@@ -8,14 +8,14 @@
 application — the container, the proxy, the transaction boundary, the hundred
 queries — and then open the actual source file behind it.
 
-No install. No server. No internet. Just double-click `index.html`.
+No install. No server. No internet. Just double-click `site/index.html`.
 
 [![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.3.5-6DB33F?style=flat&logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot)
 [![Diagrams](https://img.shields.io/badge/diagrams-21-0ea5e9?style=flat)](#whats-inside)
 [![Quiz](https://img.shields.io/badge/quiz%20questions-315-8b5cf6?style=flat)](#what-you-can-do-with-it)
 [![Works offline](https://img.shields.io/badge/works%20offline-yes-22c55e?style=flat)](#what-is-this)
 
-[**Open the hub**](index.html) · [**How to use this**](guide.html) · [Notes (docx)](Spring_Boot_Complete_Notes.docx)
+[**Open the hub**](site/index.html) · [**How to use this**](site/guide.html) · [Notes (docx)](site/Spring_Boot_Complete_Notes.docx)
 
 <img src="docs/screenshots/hub-home.png" alt="The hub: 21 diagrams, 6 tracks, 196 nodes, and a card that points a first-time visitor to the guide" width="100%">
 
@@ -172,7 +172,7 @@ shortcut, best practices, and a 30-day plan.
 
 ```bash
 git clone <your-repo-url>
-start index.html        # Windows — or just double-click it
+start site\index.html    # Windows — or just double-click it
 ```
 
 That is the entire setup. Then:
@@ -181,7 +181,7 @@ That is the entire setup. Then:
    or one of the 21 diagrams — a spotlight walks you through that page in under
    a minute: what the buttons do, where the shortcuts are. Skip it whenever you
    like; press `U` or the *Tour* button to run it again.
-2. **Read [guide.html](guide.html)** — 10 minutes, and you will know every button.
+2. **Read [site/guide.html](site/guide.html)** — 10 minutes, and you will know every button.
 3. **Open the roadmap** from *Tracks* and work top to bottom inside a track.
 4. **Hover instead of reading.** If a card says `walkthrough`, take it — that is
    the same material as a step-by-step trace through the code.
@@ -251,10 +251,10 @@ Everything under `docs/screenshots/` and `brag-output/` is generated or
 captured — the diagrams and data are the source of truth.
 
 ```bash
-node tools/capture-evidence.mjs     # 1. boot the app, record real responses  → evidence.js
+node tools/capture-evidence.mjs     # 1. boot the app, record real responses  → site/evidence.js
 node tools/build-traces.mjs         # 2. evidence → walkthrough steps
-node tools/build-code-viewer.mjs    # 3. mirror bookstore/** → code-source.js
-node tools/build-content-index.mjs  # 4. all content → content-index.js
+node tools/build-code-viewer.mjs    # 3. mirror bookstore/** → site/code-source.js
+node tools/build-content-index.mjs  # 4. all content → site/content-index.js
 node tools/enhance-hover.mjs        # 5. stamp the 21 diagrams with hover passports
 ```
 
@@ -293,17 +293,19 @@ picture.
 ## Repository map
 
 ```text
-index.html  hub.js                  the hub: tracks, library, practice, progress
-guide.html                          plain-English guide — start here if you are new
-sbkit.js  sbkit.css                 the shared kit: passport, panels, code lab
-Spring_Boot_*.html                  21 diagrams, self-contained
-content-index.js  code-source.js    generated: search index, 48 mirrored files
-evidence.js  concepts.js            generated: measured responses, 30 concept cards
-study-data.js                       315 quiz · 47 debug · 154 interview · 96 glossary
+site/                               the whole site — open site/index.html
+  index.html  hub.js                the hub: tracks, library, practice, progress
+  guide.html                        plain-English guide — start here if you are new
+  sbkit.js  sbkit.css               the shared kit: passport, panels, code lab
+  Spring_Boot_*.html                21 diagrams, self-contained
+  content-index.js  code-source.js  generated: search index, 48 mirrored files
+  evidence.js  concepts.js          generated: measured responses, 30 concept cards
+  study-data.js                     315 quiz · 47 debug · 154 interview · 96 glossary
 bookstore/                          the runnable Spring Boot 3.3.5 companion app
-tools/                              5 builders · 5 probes · 1 audit
+tools/                              5 builders · 6 probes · 1 audit
 docs/screenshots/                   the images used in this README
 brag-output/                        the 21-second film, its poster, and the composition
+samples/                            docx build scratch
 ```
 
 ---
@@ -311,10 +313,10 @@ brag-output/                        the 21-second film, its poster, and the comp
 <a id="docs"></a>
 ## Documentation
 
-- **[guide.html](guide.html)** — how to use every feature, in plain English. Start here.
+- **[site/guide.html](site/guide.html)** — how to use every feature, in plain English. Start here.
 - **[bookstore/README.md](bookstore/README.md)** — how the companion app maps to
   diagram node-ids, and how to regenerate the assets.
-- **[Spring_Boot_Complete_Notes.docx](Spring_Boot_Complete_Notes.docx)** — the same
+- **[site/Spring_Boot_Complete_Notes.docx](site/Spring_Boot_Complete_Notes.docx)** — the same
   material as a printable document.
 
 ---

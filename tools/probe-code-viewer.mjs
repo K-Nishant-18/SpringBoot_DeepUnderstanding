@@ -54,7 +54,7 @@ await send('Runtime.enable');
 await send('Page.enable');
 await send('Page.addScriptToEvaluateOnNewDocument', { source: 'window.SB_TOUR_OFF = true' });
 
-const BASE = pathToFileURL(ROOT + '/').href;
+const BASE = pathToFileURL(join(ROOT, 'site') + '/').href;
 const results = [];
 const check = (name, ok, detail = '') => {
   results.push({ name, ok });

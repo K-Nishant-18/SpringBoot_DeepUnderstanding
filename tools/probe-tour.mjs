@@ -9,7 +9,7 @@ import { spawn } from 'node:child_process';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
-const DIR = ROOT;
+const DIR = join(ROOT, 'site');
 const TMP = 'C:/Users/itsni/AppData/Local/Temp/opencode/probetour';
 const CHROME = 'C:/Program Files/Google/Chrome/Application/chrome.exe';
 const PORT = 9351;

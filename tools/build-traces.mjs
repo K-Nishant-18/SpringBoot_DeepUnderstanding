@@ -4,7 +4,7 @@ import { dirname, join } from 'node:path';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
-const OUT = join(ROOT, 'evidence.js');
+const OUT = join(ROOT, 'site', 'evidence.js');
 const existing = readFileSync(OUT, 'utf8');
 
 const TRACES = {

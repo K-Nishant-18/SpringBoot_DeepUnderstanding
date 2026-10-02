@@ -8,8 +8,8 @@ import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
-const DIR = ROOT;
-const OUT = join(ROOT, 'content-index.js');
+const DIR = join(ROOT, 'site');
+const OUT = join(ROOT, 'site', 'content-index.js');
 
 const META = {
   Spring_Boot_Roadmap:              { track: 'Foundations',            type: 'workflow',    order: 1, icon: 'map' },
@@ -294,7 +294,7 @@ for (const d of Object.values(index.diagrams)) {
   for (const c of d.code) {
     codeLinks++;
     if (!d.nodes.some((n) => n.id === c.node)) err_missing(`  ${d.key}: code link targets unknown node "${c.node}"`);
-    if (!existsSync(`${DIR}/${c.path.replace(/\//g, '\\')}`)) missingFiles.add(c.path);
+    if (!existsSync(`${ROOT}/${c.path.replace(/\//g, '\\')}`)) missingFiles.add(c.path);
   }
 }
 function err_missing(m) { console.log('  MISS ' + m.trim()); problems++; }

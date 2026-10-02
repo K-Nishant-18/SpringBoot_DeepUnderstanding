@@ -10,7 +10,7 @@ import NEW from './hover-data-new.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
-const DIR = ROOT;
+const DIR = join(ROOT, 'site');
 
 const ACCENT = {
   frontend: '#22d3ee', backend: '#34d399', database: '#a78bfa', cloud: '#fbbf24',

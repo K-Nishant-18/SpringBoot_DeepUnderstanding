@@ -1412,7 +1412,7 @@
       var miss = el('div', 'sb-h-s');
       miss.textContent = 'This file is not mirrored into code-source.js, so it cannot be shown here. Run node tools/build-code-viewer.mjs to mirror it.';
       bodyEl.appendChild(miss);
-      if (arg.raw) bodyEl.appendChild(btn('Open the raw file', 'sb-btn', function () { location.href = arg.raw; }));
+      if (arg.raw) bodyEl.appendChild(btn('Open the raw file', 'sb-btn', function () { location.href = arg.raw.indexOf('bookstore/') === 0 ? '../' + arg.raw : arg.raw; }));
       clear(footEl);
       footEl.appendChild(el('span', 'sb-spacer'));
       footEl.appendChild(btn('Back', 'sb-btn is-primary', function () { back(); }));
@@ -1479,7 +1479,7 @@
     }
 
     clear(footEl);
-    if (arg.raw) footEl.appendChild(btn('Open the raw file', 'sb-btn', function () { location.href = arg.raw; }));
+    if (arg.raw) footEl.appendChild(btn('Open the raw file', 'sb-btn', function () { location.href = arg.raw.indexOf('bookstore/') === 0 ? '../' + arg.raw : arg.raw; }));
     footEl.appendChild(el('span', 'sb-spacer'));
     footEl.appendChild(btn('Back', 'sb-btn is-primary', function () { back(); }));
 

@@ -145,7 +145,7 @@
     host.appendChild(card('See the proxy trap', 'Why @Transactional, @Cacheable and @Async quietly stop working on self-invocation.', ['AOP + anti-patterns'], function () { openD('Spring_Boot_AOP_Proxy'); }));
     host.appendChild(card('Fix the query that ruins production', 'One query becomes a hundred. Hibernate fetch plans, join fetch, and the entity graph answer.', ['N+1 path'], function () { openD('Spring_Boot_Nplus1'); }));
     host.appendChild(card('Ship it and watch it', 'Actuator, health groups, metrics, traces, and what readiness should actually check.', ['observability'], function () { openD('Spring_Boot_Observability'); }));
-    host.appendChild(card('Run the code', 'A small Book Store API with the same entities, the same N+1, the same transaction boundary.', ['runnable project'], function () { location.href = 'bookstore/'; }, 'code'));
+    host.appendChild(card('Run the code', 'A small Book Store API with the same entities, the same N+1, the same transaction boundary.', ['runnable project'], function () { location.href = '../bookstore/'; }, 'code'));
 
     var how = document.getElementById('howto');
     clear(how);

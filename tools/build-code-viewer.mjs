@@ -4,8 +4,8 @@ import { dirname, join, basename } from 'node:path';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const BOOK = join(ROOT, 'bookstore');
-const INDEX = join(ROOT, 'content-index.js');
-const OUT = join(ROOT, 'code-source.js');
+const INDEX = join(ROOT, 'site', 'content-index.js');
+const OUT = join(ROOT, 'site', 'code-source.js');
 
 /*
  * Every file any diagram can link to gets mirrored here, because the reader must
