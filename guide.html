@@ -222,7 +222,7 @@
         <p>The Book Store source is mirrored inside the page, and the API responses were captured from one live run -
         18 queries vs 1 for the N+1 case, 201/409 for the transaction modes. All of it with proof.</p></div>
       <div class="card"><h3><i class="dot"></i>Everything stays in your browser</h3>
-        <p>Quiz scores, notes and progress all live in <code class="inline-code">localStorage</code>, in this browser only.
+        <p>Quiz scores and progress all live in <code class="inline-code">localStorage</code>, in this browser only.
         Nothing is uploaded. One click on the Progress tab resets it.</p></div>
       <div class="card"><h3><i class="dot"></i>Works offline, and prints</h3>
         <p>The theme toggle and the Print button both work, so you can export the whole revision as a PDF.</p></div>
@@ -245,8 +245,9 @@
         <span>The full trip from browser to SQL. This is the diagram that makes the rest start to make sense. Hover a node and read its passport.</span></li>
       <li><b>Press <kbd>Q</kbd> after every diagram</b>
         <span>The quiz only shows questions for that diagram. A wrong answer comes with an explanation, a "Walk through" and a source link - jump straight to the code from there.</span></li>
-      <li><b>Write notes with <kbd>N</kbd></b>
-        <span>Whatever you keep forgetting, write a note on that node. Notes are saved in the browser together with your progress - they do the same job when you revise for an interview.</span></li>
+      <li><b>Open the code with <kbd>C</kbd></b>
+        <span>Every claim in a diagram has a source link behind it. The code lab shows the mirrored Book Store source
+        and the captured API responses - open it next to the diagram, not instead of it.</span></li>
     </ol>
     <div class="note tip">Do not open all 21 diagrams at once. Finish one track, clear its quiz, then start the next one. Otherwise you get information overload and you retain nothing.</div>
   </section>
@@ -261,7 +262,7 @@
       <div class="m"><kbd>3</kbd><b>Library</b><span>All 21 diagrams in one grid, tagged by type (workflow, sequence, architecture...).</span></div>
       <div class="m"><kbd>4</kbd><b>Practice</b><span>Quiz picker, debugging table, interview bank and glossary - all four in one place.</span></div>
       <div class="m"><kbd>5</kbd><b>Concepts</b><span>30 shared concepts, each one telling you which diagrams it appears in.</span></div>
-      <div class="m"><kbd>6</kbd><b>Progress</b><span>Per diagram: opened or not, quiz score, note count, and a progress bar.</span></div>
+      <div class="m"><kbd>6</kbd><b>Progress</b><span>Per diagram: opened or not, quiz score, and a progress bar.</span></div>
     </div>
     <div class="grid" style="margin-top:12px">
       <div class="card"><h3><i class="dot"></i>The Home cards</h3>
@@ -296,13 +297,13 @@
         passport for every node in that step. <kbd>&rarr;</kbd>, <kbd>Space</kbd> or <kbd>P</kbd> moves forward,
         <kbd>&larr;</kbd> moves back, <kbd>Home</kbd> and <kbd>End</kbd> jump to the ends.</p></div>
       <div class="card"><h3><i class="dot"></i>The toolbar on top</h3>
-        <p>Search, Walk through, Code lab, Quiz, Notes, Present, Tour, Terms, Debug, Interview, Hub - all one click away.
+        <p>Search, Walk through, Code lab, Quiz, Present, Tour, Terms, Debug, Interview, Hub - all one click away.
         Every button also shows its shortcut. On your first visit each page walks you through itself once - a
         spotlight card that points at the diagram, the passport, the toolbar and the shortcuts - and the Tour
         button (or <kbd>U</kbd>) brings that walk back whenever you want it.</p></div>
       <div class="card"><h3><i class="dot"></i>Deep links</h3>
         <p>Any page can also be opened like this: <code class="inline-code">...html#node=query101</code> (focus a specific node)
-        or <code class="inline-code">...html#view=quiz</code> (open the quiz panel right away). Keep links like that in your notes or bookmarks.</p></div>
+        or <code class="inline-code">...html#view=quiz</code> (open the quiz panel right away). Keep links like that in your bookmarks.</p></div>
     </div>
     <div class="note"><b>Keyboard first:</b> you do not need the mouse. <kbd>Tab</kbd> moves from node to node,
     <kbd>Enter</kbd> opens the detail, <kbd>Esc</kbd> closes it. Every node also has an ARIA label for screen reader users.</div>
@@ -358,8 +359,8 @@
 
   <!-- 07 -->
   <section class="sec" id="s07">
-    <div class="sechead"><span class="num">07</span><h2>Practice tools - Quiz, Notes, Glossary, Debug, Interview</h2></div>
-    <p class="sub">These five things are what turn "reading" into "remembering". Each one has its own shortcut.</p>
+    <div class="sechead"><span class="num">07</span><h2>Practice tools - Quiz, Glossary, Debug, Interview</h2></div>
+    <p class="sub">These four things are what turn "reading" into "remembering". Each one has its own shortcut.</p>
     <table class="tbl">
       <thead><tr><th>Tool</th><th>Shortcut</th><th>What it does and how to use it</th></tr></thead>
       <tbody>
@@ -367,9 +368,6 @@
           <td class="d">128 items, with separate questions for each diagram. The score meter runs across the top.
           A wrong answer brings an <b>explanation + Walk through + captured response + source link</b> - that is the real learning flow.
           <code class="inline-code">missed</code> questions are tracked.</td></tr>
-        <tr><td class="k">Notes</td><td class="k"><kbd>N</kbd></td>
-          <td class="d">A note on the node you hovered last, or a note for the whole diagram. The "All notes" section lists
-          every note in one place, each with an "Open diagram" link. A copy button lets you take them out.</td></tr>
         <tr><td class="k">Glossary</td><td class="k"><kbd>G</kbd></td>
           <td class="d">96 terms, all searchable. Read the whole glossary once before an interview and your definitions get tight.</td></tr>
         <tr><td class="k">Debug table</td><td class="k"><kbd>T</kbd></td>
@@ -389,12 +387,12 @@
     <div class="sechead"><span class="num">08</span><h2>Progress, theme, print - set it up your way</h2></div>
     <div class="split">
       <div class="card"><h3><i class="dot"></i>Progress tab</h3>
-        <p>A table per diagram: opened or not, how many quiz answers are right, how many notes, and one bar that adds all
-        three together (34% opened + 33% quiz + 33% notes). The Tracks tab has a progress bar above each track.</p>
+        <p>A table per diagram: opened or not, how many quiz answers are right, and one bar that adds both
+        together (50% opened + 50% quiz). The Tracks tab has a progress bar above each track.</p>
         <p><b>Reset all progress</b> clears everything at once - at the bottom of the Progress tab.</p></div>
       <div class="card"><h3><i class="dot"></i>Everything is local</h3>
-        <p><code class="inline-code">sbk.v1.progress</code>, <code class="inline-code">sbk.v1.quiz</code>,
-        <code class="inline-code">sbk.v1.notes</code> - three keys, all in browser <code class="inline-code">localStorage</code>.
+        <p><code class="inline-code">sbk.v1.progress</code>, <code class="inline-code">sbk.v1.quiz</code> - two keys,
+        all in browser <code class="inline-code">localStorage</code>.
         No account, no server call. Your progress does not move to another browser or machine.</p></div>
       <div class="card"><h3><i class="dot"></i>Theme</h3>
         <p>The <b>Theme</b> button in the header switches dark and light. Your choice is saved in
@@ -420,7 +418,6 @@
       <tbody>
         <tr><td class="k"><kbd>Ctrl</kbd> / <kbd>Cmd</kbd> + <kbd>K</kbd></td><td class="d">Search - all of it (diagrams, nodes, concepts, glossary, debug, interview)</td></tr>
         <tr><td class="k"><kbd>Q</kbd></td><td class="d">Quiz - questions for this diagram, with a score</td></tr>
-        <tr><td class="k"><kbd>N</kbd></td><td class="d">Notes - a note on the node you hovered last, plus all your old notes</td></tr>
         <tr><td class="k"><kbd>P</kbd></td><td class="d">Presentation stage - light on the current step, narration on the right</td></tr>
         <tr><td class="k"><kbd>C</kbd></td><td class="d">Code lab - concepts, mirrored source, walkthroughs</td></tr>
         <tr><td class="k"><kbd>G</kbd></td><td class="d">Glossary - 96 terms, searchable</td></tr>
@@ -449,9 +446,10 @@
       <div class="card"><h3><i class="dot"></i>2. A quiz after every diagram, no exceptions</h3>
         <p>Reading a diagram feels comfortable; only the quiz shows the gap. Always read the explanation for a wrong answer -
         that is where the real misunderstanding shows up.</p></div>
-      <div class="card"><h3><i class="dot"></i>3. Turn notes into interview prep</h3>
-        <p>Write each note as if you were explaining it to yourself a week later: "difference between REQUIRED and
-        REQUIRES_NEW - the outer one is suspended, so..." Those notes become a personal cheat sheet later.</p></div>
+      <div class="card"><h3><i class="dot"></i>3. Turn wrong answers into interview prep</h3>
+        <p>Read the explanation for each question you missed as if you were explaining it to yourself a week later:
+        "difference between REQUIRED and REQUIRES_NEW - the outer one is suspended, so..." Those explanations become
+        a personal cheat sheet later.</p></div>
       <div class="card"><h3><i class="dot"></i>4. Move sideways through concept chips</h3>
         <p>Whenever you see a concept chip in a passport, click it. Seeing one trap from three different angles
         is what actually understanding the concept means. The Concepts tab does the same job.</p></div>
@@ -471,10 +469,10 @@
         <p>Jumping from the middle of one track to another is the biggest mistake. Take a track's progress bar to 100%
         before you open the next one.</p></div>
       <div class="card"><h3><i class="dot"></i>10. Spaced repetition - come back after a week</h3>
-        <p>Seven days after finishing a track, open it again and only take the quiz. Update the note on anything you still
-        forget. The Progress tab shows where you are weak.</p></div>
+        <p>Seven days after finishing a track, open it again and only take the quiz. Read the explanation for anything you still
+        get wrong. The Progress tab shows where you are weak.</p></div>
       <div class="card"><h3><i class="dot"></i>11. Take a printout or PDF</h3>
-        <p>Two days before an interview, export everything to a PDF and read only your notes and missed quiz questions.
+        <p>Two days before an interview, export everything to a PDF and read only the explanations of the questions you missed.
         That works better than a screen.</p></div>
       <div class="card"><h3><i class="dot"></i>12. Say each concept "in one line"</h3>
         <p>Open the Concepts tab and say each concept in one line, in your own words. Whatever you cannot do, read again.
@@ -503,11 +501,11 @@
         <span>Run the project, curl the N+1 endpoint, see the 409 from <code class="inline-code">mode=poison</code> yourself,
         check the transaction probe. Keep the code lab open alongside it with <kbd>C</kbd>.</span></div></div>
       <div class="stop"><div class="day">DAY 26-27</div><div class="body"><b>Quiz sweep - 128 items</b>
-        <span>Take every diagram's quiz again from the Practice tab. Update the note for anything you miss. Target: 80%+ on every diagram.</span></div></div>
+        <span>Take every diagram's quiz again from the Practice tab. Read the explanation for anything you miss. Target: 80%+ on every diagram.</span></div></div>
       <div class="stop"><div class="day">DAY 28-29</div><div class="body"><b>Debug table + Interview bank</b>
         <span>Read the 47 debug entries once, symptom by symptom. Then the 74 interview questions - junior to senior, without looking at answers.</span></div></div>
-      <div class="stop"><div class="day">DAY 30</div><div class="body"><b>Revision - notes + PDF</b>
-        <span>Read all your notes once, redo the missed quiz questions, export the PDF. You are ready now.</span></div></div>
+      <div class="stop"><div class="day">DAY 30</div><div class="body"><b>Revision - missed questions + PDF</b>
+        <span>Redo the questions you missed, read their explanations once, export the PDF. You are ready now.</span></div></div>
     </div>
   </section>
 
@@ -544,7 +542,7 @@
       <thead><tr><th>Problem</th><th>Fix</th></tr></thead>
       <tbody>
         <tr><td class="k">"I opened everything and remember nothing"</td>
-          <td class="d">You read it, but you did not recall it. Always take the quiz after reading, and write a note.</td></tr>
+          <td class="d">You read it, but you did not recall it. Always take the quiz after reading, and read the explanation for anything you miss.</td></tr>
         <tr><td class="k">I clicked a code link and got a text dump</td>
           <td class="d">That was a bug and it is fixed - every link now opens in the page viewer.
           If you ever see it, run <code class="inline-code">node tools/build-code-viewer.mjs</code>.</td></tr>

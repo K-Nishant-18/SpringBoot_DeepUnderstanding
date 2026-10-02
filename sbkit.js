@@ -64,9 +64,6 @@
     state.toastT = setTimeout(function () { root.removeAttribute('data-sb-toast'); }, 1700);
   }
 
-  function nkey(s) { return SELF + '::' + s; }
-  function parseKey(k) { var i = k.indexOf('::'); return { d: k.slice(0, i), n: k.slice(i + 2) }; }
-
   function nodeTitle(d, n) {
     var dia = IDX.diagrams[d];
     if (!dia) return n;
@@ -391,54 +388,6 @@
       footEl.appendChild(btn('Reset', 'sb-btn', function () { all[SELF] = { i: 0, score: 0, done: 0, missed: [] }; write('quiz', all); rec = all[SELF]; toast('Quiz reset'); paint(); }));
     }
     paint();
-  }
-
-  function notesAll() { return read('notes', {}); }
-
-  function renderNotes(arg) {
-    var nid = typeof arg === 'string' ? arg : (state.lastNode || 'GLOBAL');
-    setPanel('Notes', 'stored in this browser', false, true, true);
-    var top = section('Note for ' + (nid === 'GLOBAL' ? 'this diagram' : nodeTitle(SELF, nid)));
-    var ta = el('textarea', 'sb-field sb-note-area');
-    ta.placeholder = 'Write your takeaway, the config you would use, the gotcha you keep forgetting...';
-    var all = notesAll();
-    ta.value = all[nkey(nid)] || '';
-    top.appendChild(ta);
-    bodyEl.appendChild(top);
-
-    var self = section('Save');
-    var row = el('div', 'sb-row');
-    row.appendChild(btn('Save note', 'sb-btn is-primary', function () {
-      all[nkey(nid)] = ta.value;
-      write('notes', all);
-      toast(ta.value.trim() ? 'Note saved' : 'Note cleared');
-      renderNotes(nid);
-    }));
-    row.appendChild(btn('Copy', 'sb-btn', function () {
-      ta.select();
-      try { document.execCommand('copy'); toast('Copied'); } catch (e) { toast('Select and copy manually'); }
-    }));
-    self.appendChild(row);
-    bodyEl.appendChild(self);
-
-    var list = section('All notes (' + Object.keys(all).length + ')');
-    var ks = Object.keys(all).filter(function (k) { return all[k] && all[k].trim(); });
-    if (!ks.length) list.appendChild(el('div', 'sb-empty', 'No notes yet. Hover a node, then open Notes.'));
-    ks.forEach(function (k) {
-      var p = parseKey(k);
-      var item = el('div', 'sb-note-item');
-      item.appendChild(el('div', 'sb-nt', p.d === SELF ? (p.n === 'GLOBAL' ? 'This diagram' : nodeTitle(p.d, p.n)) : p.d.replace('Spring_Boot_', '') + ' / ' + nodeTitle(p.d, p.n)));
-      item.appendChild(el('div', 'sb-nb', all[k]));
-      var m = el('div', 'sb-nm', k);
-      item.appendChild(m);
-      if (p.d !== SELF) item.appendChild(linkTo(p.d, p.n, 'Open diagram'));
-      else item.appendChild(btn('Edit', 'sb-link', function () { renderNotes(p.n); }));
-      list.appendChild(item);
-    });
-    bodyEl.appendChild(list);
-
-    clear(footEl);
-    footEl.appendChild(btn('Done', 'sb-btn', close));
   }
 
   function renderConcept(slug) {
@@ -1052,7 +1001,6 @@
     tb.innerHTML = '<tbody>' +
       '<tr><td>Ctrl / Cmd + K</td><td>Search everything</td></tr>' +
       '<tr><td>q</td><td>Quiz on this diagram</td></tr>' +
-      '<tr><td>n</td><td>Notes</td></tr>' +
       '<tr><td>p</td><td>Presentation stage: the guided view with narration and a card per node</td></tr>' +
       '<tr><td>g</td><td>Glossary</td></tr>' +
       '<tr><td>t</td><td>Troubleshooting</td></tr>' +
@@ -1677,7 +1625,6 @@
     if (!view) return;
     if (view === 'search') return renderSearch(state.arg);
     if (view === 'quiz') return renderQuiz();
-    if (view === 'notes') return renderNotes(state.arg);
     if (view === 'concept') return renderConcept(state.arg);
     if (view === 'glossary') return renderGlossary(state.arg);
     if (view === 'trouble') return renderTrouble(state.arg);
@@ -1698,16 +1645,6 @@
     Array.prototype.forEach.call(card.querySelectorAll('.sb-card-extra'), function (n) { n.parentNode.removeChild(n); });
     if (kind !== 'n') return;
     var wrap = el('div', 'sb-card-extra');
-    var notes = notesAll();
-    var nk = nkey(nid);
-    if (notes[nk] && notes[nk].trim()) {
-      var b = el('button', 'sb-chip');
-      b.type = 'button';
-      b.appendChild(el('span', 'sb-dot'));
-      b.appendChild(el('span', null, 'has note'));
-      b.addEventListener('click', function (e) { e.stopPropagation(); open('notes', nid); });
-      wrap.appendChild(b);
-    }
     var slugs = conceptsFor(SELF, nid);
     var codeRows = DIA ? ((DIA.code || []).filter(function (c) { return c.node === nid; })) : [];
     if (codeRows.length) {
@@ -1781,7 +1718,6 @@
       bar.appendChild(barBtn('Code lab', 'C', function () { open('info'); }));
     }
     bar.appendChild(barBtn('Quiz', 'Q', function () { open('quiz'); }));
-    bar.appendChild(barBtn('Notes', 'N', function () { open('notes', state.lastNode || 'GLOBAL'); }));
     bar.appendChild(barBtn('Present', 'P', function () { if (presentState.on) close(); else startPresent(0); }));
     bar.appendChild(barBtn('Terms', 'G', function () { open('glossary'); }));
     bar.appendChild(barBtn('Debug', 'T', function () { open('trouble'); }));
@@ -1819,7 +1755,7 @@
     if (card) {
       card.addEventListener('sb:hover', function (e) {
         var d = e.detail || {};
-        if (d.kind === 'n') { state.lastNode = d.key; injectCardExtras('n', d.key); }
+        if (d.kind === 'n') injectCardExtras('n', d.key);
         else if (d.kind === null) { Array.prototype.forEach.call(card.querySelectorAll('.sb-card-extra'), function (n) { n.parentNode.removeChild(n); }); }
       });
     }
@@ -1838,7 +1774,6 @@
       if (view === 'present' && k === 'end') { e.preventDefault(); stepTo(presentSteps().length - 1, true); return; }
       if (view) return;
       if (k === 'q') { e.preventDefault(); open('quiz'); }
-      else if (k === 'n') { e.preventDefault(); open('notes', state.lastNode || 'GLOBAL'); }
       else if (k === 'p') { e.preventDefault(); startPresent(0); }
       else if (k === 'g') { e.preventDefault(); open('glossary'); }
       else if (k === 't') { e.preventDefault(); open('trouble'); }

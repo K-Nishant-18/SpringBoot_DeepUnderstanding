@@ -65,24 +65,6 @@ const HARNESS = `
   window.SBKit.close();
   await sleep(80);
 
-  // ---- notes ----
-  window.SBKit.open('notes','GLOBAL');
-  await sleep(140);
-  out.notesOpen=kit.getAttribute('data-sb-view')==='notes';
-  const ta=kit.querySelector('textarea.sb-note-area');
-  out.notesArea=!!ta;
-  if(ta){
-    ta.value='probe note '+Date.now();
-    const save=$$('.sb-foot button, .sb-body button').find(b=>b.textContent==='Save note');
-    out.saveButton=!!save;
-    if(save) save.click();
-    await sleep(150);
-    out.noteStored=Object.keys(JSON.parse(localStorage.getItem('sbk.v1.notes')||'{}')).length>0;
-    out.noteListed=$$('.sb-note-item').length>0;
-  }
-  window.SBKit.close();
-  await sleep(80);
-
   // ---- concept chips inside the hover card ----
   const CON=window.SBKit.concepts();
   const nodeIds=$$('[data-node-id]').map(n=>n.getAttribute('data-node-id'));
@@ -208,8 +190,6 @@ try {
       if (r.quizOptions < 3) p.push('quiz-opts=' + r.quizOptions);
       if (!r.quizFeedback) p.push('quiz-no-feedback');
       if (!r.quizMarked) p.push('quiz-unmarked');
-      if (!r.notesOpen || !r.notesArea) p.push('notes-broken');
-      if (!r.noteStored) p.push('note-not-stored');
       if (r.chips.covered > 0 && r.chips.testedNodes < 1) p.push('no-concept-node');
       if (r.chips.testedNodes && !r.chips.withChips) p.push('no-card-chips');
       if (r.chips.testedNodes && r.chips.withChips !== r.chips.testedNodes) p.push('partial-chips=' + r.chips.withChips + '/' + r.chips.testedNodes);
@@ -229,7 +209,7 @@ try {
       console.log(`   bar=${r.barButtons} [${r.barLabels.join(' ')}]  stats=${r.stats.diagrams}d/${r.stats.nodes}n/${r.stats.edges}e/${r.stats.views}v`);
       console.log(`   search hits=${r.searchHits} marks=${r.searchMarks} groups=${(r.searchGroups || []).join('|')}  conceptResult=${r.conceptResultFound}`);
       console.log(`   quiz "${String(r.quizQuestion).slice(0, 58)}..." opts=${r.quizOptions} ${r.quizMeter} -> ${r.quizScoreAfter}`);
-      console.log(`   notes stored=${r.noteStored} listed=${r.noteListed}  chips=${r.chips.withChips}/${r.chips.testedNodes} of ${r.chips.covered} covered nodes [${r.chips.chipLabels.join(' / ')}]`);
+      console.log(`   chips=${r.chips.withChips}/${r.chips.testedNodes} of ${r.chips.covered} covered nodes [${r.chips.chipLabels.join(' / ')}]`);
       console.log(`   present "${r.presentStep}" -> "${r.presentStepAfter}" steps=${r.presentSteps} dimmed=${r.dimmedAfterStep}/${r.totalNodes}`);
     }
   }

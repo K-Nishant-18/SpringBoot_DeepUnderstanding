@@ -21,11 +21,6 @@
     return { workflow: 'workflow', sequence: 'sequence', architecture: 'architecture', lifecycle: 'lifecycle', dataflow: 'data flow' }[t] || t;
   }
 
-  function noteCountFor(d) {
-    var notes = read('notes', {});
-    var pre = d + '::';
-    return Object.keys(notes).filter(function (k) { return k.indexOf(pre) === 0 && notes[k] && notes[k].trim(); }).length;
-  }
   function quizFor(d) { return (STUDY.quiz || []).filter(function (q) { return q.d === d; }).length; }
 
   function card(title, desc, meta, onClick, badge) {
@@ -74,7 +69,6 @@
 
     var progress = read('progress', {});
     var quiz = read('quiz', {});
-    var notes = read('notes', {});
 
     var opened = keys.filter(function (k) { return progress[k]; });
     var last = null, lastT = -1;
@@ -87,7 +81,6 @@
 
     var qDone = 0, qRight = 0;
     keys.forEach(function (k) { var r = quiz[k]; if (r) { qDone += r.done; qRight += r.score; } });
-    var nAll = Object.keys(notes).filter(function (k) { return notes[k] && notes[k].trim(); }).length;
 
     host.appendChild(el('span', 'rail-k', 'Status'));
 
@@ -99,7 +92,6 @@
 
     host.appendChild(el('span', 'rail-v', opened.length + '/' + keys.length + ' diagrams opened'));
     host.appendChild(el('span', 'rail-k', qRight + '/' + qDone + ' quiz right'));
-    host.appendChild(el('span', 'rail-k', nAll + ' notes'));
 
     if (last) {
       host.appendChild(el('span', 'rail-sep'));
@@ -143,7 +135,6 @@
       ['Follow a concept sideways', 'When a card shows concept chips, that idea appears in other diagrams. Click one to see the same trap from a different angle.'],
       ['Present a view', 'Press P. Each guided view dims everything except the nodes that matter, with the narration note underneath.'],
       ['Test yourself', 'Press Q for a quiz scoped to the diagram you are on. Wrong answers explain themselves, and your score is kept.'],
-      ['Write it down', 'Press N to attach a note to the node you last hovered. Notes stay in this browser.'],
       ['Debug by symptom', 'Press T. 47 entries keyed by the exception, the status code, or the log line you are actually staring at.'],
     ].forEach(function (r) {
       var c = el('div', 'card');
@@ -176,7 +167,7 @@
       t.diagrams.forEach(function (k) {
         var d = D[k];
         var rec = quiz[k] || { score: 0, done: 0 };
-        grid.appendChild(card(d.title, quizFor(k) + ' quiz items · ' + noteCountFor(k) + ' notes · ' + d.views.length + ' guided views',
+        grid.appendChild(card(d.title, quizFor(k) + ' quiz items · ' + d.views.length + ' guided views',
           [d.nodes.length + ' nodes', d.edges.length + ' rels', typeLabel(d.type)],
           function () { openD(k); },
           rec.done ? Math.round((rec.score / rec.done) * 100) + '% quiz' : null));
@@ -248,16 +239,14 @@
     clear(host);
     var progress = read('progress', {});
     var quiz = read('quiz', {});
-    var notes = read('notes', {});
 
     var total = keys.length;
     var opened = keys.filter(function (k) { return progress[k]; }).length;
     var qDone = 0, qRight = 0;
     keys.forEach(function (k) { var r = quiz[k]; if (r) { qDone += r.done; qRight += r.score; } });
-    var nAll = Object.keys(notes).filter(function (k) { return notes[k] && notes[k].trim(); }).length;
 
     var stats = el('div', 'stats');
-    [[opened + '/' + total, 'diagrams opened'], [qRight + '/' + qDone, 'quiz answers right'], [String(nAll), 'notes written'], [String(Object.keys(CON).length), 'concepts available']]
+    [[opened + '/' + total, 'diagrams opened'], [qRight + '/' + qDone, 'quiz answers right'], [String(Object.keys(CON).length), 'concepts available']]
       .forEach(function (r) {
         var s = el('div', 'stat');
         s.appendChild(el('b', null, r[0]));
@@ -275,7 +264,7 @@
     head.style.textTransform = 'uppercase';
     head.style.letterSpacing = '.08em';
     head.style.fontWeight = '700';
-    ['Diagram', 'Opened', 'Quiz', 'Notes', 'Progress'].forEach(function (t) { head.appendChild(el('b', null, t)); });
+    ['Diagram', 'Opened', 'Quiz', 'Progress'].forEach(function (t) { head.appendChild(el('b', null, t)); });
     host.appendChild(head);
 
     keys.forEach(function (k) {
@@ -288,13 +277,11 @@
       r.appendChild(el('span', 'n', progress[k] ? 'yes' : 'not yet'));
       var rec = quiz[k] || { score: 0, done: 0 };
       r.appendChild(el('span', 'n', rec.done ? rec.score + '/' + rec.done : '—'));
-      r.appendChild(el('span', 'n', String(noteCountFor(k))));
       var bar = el('div', 'bar');
       var fill = el('i');
       var pct = 0;
-      if (progress[k]) pct += 34;
-      if (rec.done) pct += 33;
-      if (noteCountFor(k)) pct += 33;
+      if (progress[k]) pct += 50;
+      if (rec.done) pct += 50;
       fill.style.width = pct + '%';
       bar.appendChild(fill);
       r.appendChild(bar);
@@ -347,7 +334,7 @@
     document.getElementById('print').addEventListener('click', function () { window.print(); });
     document.getElementById('print2').addEventListener('click', function () { window.print(); });
     document.getElementById('reset').addEventListener('click', function () {
-      ['progress', 'quiz', 'notes'].forEach(function (k) { localStorage.removeItem(LS + k); });
+      ['progress', 'quiz'].forEach(function (k) { localStorage.removeItem(LS + k); });
       renderProgress();
       renderRail();
       if (window.SBKit) window.SBKit.close();

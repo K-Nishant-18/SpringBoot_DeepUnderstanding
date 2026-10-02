@@ -73,11 +73,11 @@
       },
       {
         sel: '#howto', place: 'top', title: 'How to use it',
-        body: 'Six cards, one per feature: the passport, concept chips, code chips, quizzes, notes and the hub. Read them once and the rest of the site is obvious.'
+        body: 'Five cards, one per feature: the passport, concept chips, present mode, quizzes and the debug table. Read them once and the rest of the site is obvious.'
       },
       {
         sel: '#theme', place: 'bottom', title: 'Theme and print',
-        body: 'Flip between dark and light, or print the page to a PDF. Quiz scores, notes and progress live in this browser only - nothing is uploaded anywhere.'
+        body: 'Flip between dark and light, or print the page to a PDF. Quiz scores and progress live in this browser only - nothing is uploaded anywhere.'
       },
       {
         title: 'Search beats browsing',
@@ -106,7 +106,7 @@
       },
       {
         sel: '#sbkit .sb-bar', place: 'bottom', title: 'The toolbar',
-        body: 'Everything else lives up here: search, the code lab with the mirrored source, the quiz for this diagram, your notes, Present mode, the glossary, debugging by symptom, the interview bank, the tour and the hub.'
+        body: 'Everything else lives up here: search, the code lab with the mirrored source, the quiz for this diagram, Present mode, the glossary, debugging by symptom, the interview bank, the tour and the hub.'
       },
       {
         get: function () { return barButton('Present'); }, place: 'bottom', title: 'Present mode',

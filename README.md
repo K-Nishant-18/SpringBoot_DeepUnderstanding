@@ -191,7 +191,7 @@ That is the entire setup. Then:
 | Key | Opens |
 |---|---|
 | `Ctrl` / `Cmd` + `K` | Search — everything at once |
-| `Q` · `N` · `P` · `C` | Quiz · Notes · Present mode · Code lab |
+| `Q` · `P` · `C` | Quiz · Present mode · Code lab |
 | `G` · `T` · `I` | Glossary · Debug by symptom · Interview bank |
 | `?` · `Esc` | Help · close whatever is open |
 | `U` | Tour — the walk through this page, again |
