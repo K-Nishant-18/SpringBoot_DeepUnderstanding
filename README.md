@@ -146,6 +146,7 @@ shortcut, best practices, and a 30-day plan.
 | Nodes · relationships · guided views | **196** · **209** · **61** |
 | Quiz items | **315** |
 | Review queue | wrong answers return after **1 / 3 / 7 days** |
+| Node mastery | mark any node **I know this** from its passport |
 | Debug / troubleshooting entries | **47** |
 | Interview questions with answers | **154** |
 | Glossary terms | **96** |

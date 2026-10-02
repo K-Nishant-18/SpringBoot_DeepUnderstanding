@@ -114,6 +114,41 @@ const HARNESS = `
   }
   out.chips=chipInfo;
 
+  // ---- node mastery: hover indicator + the passport's I know this toggle ----
+  localStorage.removeItem('sbk.v1.mastery');
+  if(withConcepts.length){
+    const seedM={}; seedM[window.SBKit.selfKey+'::'+withConcepts[0]]=Date.now();
+    localStorage.setItem('sbk.v1.mastery', JSON.stringify(seedM));
+    const mEl=document.querySelector('g[data-node-id="'+withConcepts[0]+'"]')||document.querySelector('[data-node-id="'+withConcepts[0]+'"]');
+    mEl.dispatchEvent(new MouseEvent('mouseenter',{bubbles:false,clientX:0,clientY:0,view:window}));
+    await sleep(200);
+    out.masteryIndicator=!!document.querySelector('#archify-hover-card .sb-card-extra .sb-chip[data-sb-on]');
+    mEl.dispatchEvent(new MouseEvent('mouseleave',{bubbles:false,view:window}));
+    await sleep(120);
+    localStorage.removeItem('sbk.v1.mastery');
+  } else out.masteryIndicator=true;
+  // click a node for real: the svg click contract opens the passport
+  const pNode=document.querySelector('[data-node-id]');
+  const pId=pNode.getAttribute('data-node-id');
+  pNode.dispatchEvent(new MouseEvent('click',{bubbles:true,cancelable:true,view:window}));
+  await sleep(450);
+  const lens=document.getElementById('focus-chip');
+  out.passportOpens=!!lens && !lens.hasAttribute('hidden');
+  const mb=document.getElementById('sb-mastery');
+  out.masteryBtn=!!mb && mb.style.display!=='none' && /I know this/.test(mb.textContent);
+  if(mb){
+    mb.click(); await sleep(120);
+    out.masteryStored=!!(JSON.parse(localStorage.getItem('sbk.v1.mastery')||'{}'))[window.SBKit.selfKey+'::'+pId];
+    out.masteryOn=mb.hasAttribute('data-sb-on') && /Known/.test(mb.textContent);
+    mb.click(); await sleep(120);
+    out.masteryCleared=!JSON.parse(localStorage.getItem('sbk.v1.mastery')||'{}')[window.SBKit.selfKey+'::'+pId];
+    out.masteryOff=!mb.hasAttribute('data-sb-on') && /I know this/.test(mb.textContent);
+  }
+  // click empty canvas: the passport must close again (document click contract)
+  document.body.dispatchEvent(new MouseEvent('click',{bubbles:true,cancelable:true,view:window}));
+  await sleep(300);
+  out.passportCloses=!lens || lens.hasAttribute('hidden');
+
   // ---- presentation ----
   window.SBKit.present(0);
   await sleep(200);
@@ -230,6 +265,14 @@ try {
       if (r.chips.covered > 0 && r.chips.testedNodes < 1) p.push('no-concept-node');
       if (r.chips.testedNodes && !r.chips.withChips) p.push('no-card-chips');
       if (r.chips.testedNodes && r.chips.withChips !== r.chips.testedNodes) p.push('partial-chips=' + r.chips.withChips + '/' + r.chips.testedNodes);
+      if (!r.masteryIndicator) p.push('no-mastery-indicator');
+      if (!r.passportOpens) p.push('passport-not-open');
+      if (!r.masteryBtn) p.push('no-mastery-btn');
+      if (r.masteryBtn && !r.masteryStored) p.push('mastery-not-stored');
+      if (r.masteryBtn && !r.masteryOn) p.push('mastery-not-on');
+      if (r.masteryBtn && !r.masteryCleared) p.push('mastery-not-cleared');
+      if (r.masteryBtn && !r.masteryOff) p.push('mastery-not-off');
+      if (!r.passportCloses) p.push('passport-stuck');
       if (!r.presentClass) p.push('present-off');
       if (!r.presentSteps) p.push('present-no-steps');
       if (r.presentStepAfter === r.presentStep) p.push('present-no-advance');
@@ -248,6 +291,7 @@ try {
       console.log(`   quiz "${String(r.quizQuestion).slice(0, 58)}..." opts=${r.quizOptions} ${r.quizMeter} -> ${r.quizScoreAfter}`);
       console.log(`   review rows=${r.reviewRows} due=${r.reviewDueRows} store=${r.reviewStoreCount} wrongMarked=${r.wrongMarked}`);
       console.log(`   chips=${r.chips.withChips}/${r.chips.testedNodes} of ${r.chips.covered} covered nodes [${r.chips.chipLabels.join(' / ')}]`);
+      console.log(`   mastery indicator=${r.masteryIndicator} passport=${r.passportOpens}/${r.passportCloses} toggle stored=${r.masteryStored} on=${r.masteryOn} cleared=${r.masteryCleared} off=${r.masteryOff}`);
       console.log(`   present "${r.presentStep}" -> "${r.presentStepAfter}" steps=${r.presentSteps} dimmed=${r.dimmedAfterStep}/${r.totalNodes}`);
     }
   }

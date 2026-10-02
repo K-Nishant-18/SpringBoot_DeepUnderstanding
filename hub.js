@@ -241,6 +241,7 @@
   function renderConcepts() {
     var host = document.getElementById('conceptlist');
     clear(host);
+    var mastery = read('mastery', {});
     var slugs = Object.keys(CON).sort(function (a, b) {
       return CON[b].refs.length - CON[a].refs.length;
     });
@@ -248,7 +249,9 @@
       var c = CON[s];
       var ds = {};
       c.refs.forEach(function (r) { ds[r[0]] = 1; });
-      host.appendChild(card(c.t, c.s, [Object.keys(ds).length + ' diagrams', c.refs.length + ' links'],
+      var known = c.refs.filter(function (r) { return mastery[r[0] + '::' + r[1]]; }).length;
+      host.appendChild(card(c.t, c.s, [Object.keys(ds).length + ' diagrams', c.refs.length + ' links',
+        known + '/' + c.refs.length + ' known'],
         function () { window.SBKit.open('concept', s); }, s));
     });
   }
@@ -268,8 +271,18 @@
     var today = todayStr();
     var due = revKeys.filter(function (k) { return (rev[k] || {}).due <= today; });
 
+    var mastery = read('mastery', {});
+    var known = 0, knownMax = 0, poolSize = {};
+    keys.forEach(function (k) {
+      var nodes = (D[k].nodes || []);
+      knownMax += nodes.length;
+      nodes.forEach(function (n) { if (mastery[k + '::' + n.id]) known++; });
+      var mine = (STUDY.quiz || []).filter(function (q) { return q.d === k; }).length;
+      poolSize[k] = mine || (STUDY.quiz || []).length;
+    });
+
     var stats = el('div', 'stats');
-    [[opened + '/' + total, 'diagrams opened'], [qRight + '/' + qDone, 'quiz answers right'], [String(due.length), 'due for review'], [String(Object.keys(CON).length), 'concepts available']]
+    [[opened + '/' + total, 'diagrams opened'], [qRight + '/' + qDone, 'quiz answers right'], [String(due.length), 'due for review'], [known + '/' + knownMax, 'nodes marked known'], [String(Object.keys(CON).length), 'concepts available']]
       .forEach(function (r) {
         var s = el('div', 'stat');
         s.appendChild(el('b', null, r[0]));
@@ -287,7 +300,7 @@
     head.style.textTransform = 'uppercase';
     head.style.letterSpacing = '.08em';
     head.style.fontWeight = '700';
-    ['Diagram', 'Opened', 'Quiz', 'Progress'].forEach(function (t) { head.appendChild(el('b', null, t)); });
+    ['Diagram', 'Opened', 'Quiz', 'Known', 'Progress'].forEach(function (t) { head.appendChild(el('b', null, t)); });
     host.appendChild(head);
 
     keys.forEach(function (k) {
@@ -300,11 +313,17 @@
       r.appendChild(el('span', 'n', progress[k] ? 'yes' : 'not yet'));
       var rec = quiz[k] || { score: 0, done: 0 };
       r.appendChild(el('span', 'n', rec.done ? rec.score + '/' + rec.done : '—'));
+      var nodes = (d.nodes || []);
+      var kKnown = nodes.filter(function (n) { return mastery[k + '::' + n.id]; }).length;
+      var kc = el('span', 'n', nodes.length ? kKnown + '/' + nodes.length : '—');
+      kc.setAttribute('data-known', '');
+      r.appendChild(kc);
       var bar = el('div', 'bar');
       var fill = el('i');
       var pct = 0;
-      if (progress[k]) pct += 50;
-      if (rec.done) pct += 50;
+      if (progress[k]) pct += 34;
+      if (poolSize[k]) pct += Math.round(33 * Math.min(1, rec.done / poolSize[k]));
+      if (nodes.length) pct += Math.round(33 * (kKnown / nodes.length));
       fill.style.width = pct + '%';
       bar.appendChild(fill);
       r.appendChild(bar);
@@ -375,8 +394,9 @@
     document.getElementById('print').addEventListener('click', function () { window.print(); });
     document.getElementById('print2').addEventListener('click', function () { window.print(); });
     document.getElementById('reset').addEventListener('click', function () {
-      ['progress', 'quiz', 'review'].forEach(function (k) { localStorage.removeItem(LS + k); });
+      ['progress', 'quiz', 'review', 'mastery'].forEach(function (k) { localStorage.removeItem(LS + k); });
       renderProgress();
+      renderConcepts();
       renderRail();
       if (window.SBKit) window.SBKit.close();
     });

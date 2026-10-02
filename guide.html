@@ -285,7 +285,8 @@
     <div class="grid">
       <div class="card"><h3><i class="dot"></i>Hover / Tab = semantic passport</h3>
         <p>Hover any node or relationship (or move focus to it with Tab) - a card opens with a summary and three specific points.
-        This is material to understand, not material to memorise.</p></div>
+        This is material to understand, not material to memorise. Click a node to pin its passport; the
+        <b>I know this</b> button there marks it as learned, and the hub counts your marks on the Concepts and Progress pages.</p></div>
       <div class="card"><h3><i class="dot"></i>Concept chips = sideways jump</h3>
         <p>If the passport shows concept chips, this idea also appears in other diagrams. Click a chip and that
         concept opens from that angle.</p></div>
@@ -297,7 +298,7 @@
         passport for every node in that step. <kbd>&rarr;</kbd>, <kbd>Space</kbd> or <kbd>P</kbd> moves forward,
         <kbd>&larr;</kbd> moves back, <kbd>Home</kbd> and <kbd>End</kbd> jump to the ends.</p></div>
       <div class="card"><h3><i class="dot"></i>The toolbar on top</h3>
-        <p>Search, Walk through, Code lab, Quiz, Present, Tour, Terms, Debug, Interview, Hub - all one click away.
+        <p>        Search, Walk through, Code lab, Quiz, Review, Present, Tour, Terms, Debug, Interview, Hub - all one click away.
         Every button also shows its shortcut. On your first visit each page walks you through itself once - a
         spotlight card that points at the diagram, the passport, the toolbar and the shortcuts - and the Tour
         button (or <kbd>U</kbd>) brings that walk back whenever you want it.</p></div>
@@ -391,13 +392,14 @@
     <div class="sechead"><span class="num">08</span><h2>Progress, theme, print - set it up your way</h2></div>
     <div class="split">
       <div class="card"><h3><i class="dot"></i>Progress tab</h3>
-        <p>A table per diagram: opened or not, how many quiz answers are right, and one bar that adds both
-        together (50% opened + 50% quiz). Below the table, <b>Due for review</b> lists the quiz questions the queue
+        <p>A table per diagram: opened or not, how many quiz answers are right, how many nodes you have marked
+        <b>I know this</b>, and one bar that adds the three together (34% opened + 33% quiz + 33% known). Below the table,
+        <b>Due for review</b> lists the quiz questions the queue
         wants you to retake, each with an "Open quiz" jump. The Tracks tab has a progress bar above each track.</p>
         <p><b>Reset all progress</b> clears everything at once - at the bottom of the Progress tab.</p></div>
       <div class="card"><h3><i class="dot"></i>Everything is local</h3>
         <p><code class="inline-code">sbk.v1.progress</code>, <code class="inline-code">sbk.v1.quiz</code>,
-        <code class="inline-code">sbk.v1.review</code> - three keys,
+        <code class="inline-code">sbk.v1.review</code>, <code class="inline-code">sbk.v1.mastery</code> - four keys,
         all in browser <code class="inline-code">localStorage</code>.
         No account, no server call. Your progress does not move to another browser or machine.</p></div>
       <div class="card"><h3><i class="dot"></i>Theme</h3>

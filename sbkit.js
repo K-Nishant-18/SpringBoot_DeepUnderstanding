@@ -318,6 +318,20 @@
     write('review', all);
   }
 
+  /* Node mastery: one localStorage entry per node the reader marked with
+   * "I know this" from the passport. Keyed "<diagram>::<node>" so the hub can
+   * count coverage per concept and per diagram. */
+  function masteryAll() { return read('mastery', {}); }
+  function masteryHas(d, n) { return !!masteryAll()[d + '::' + n]; }
+  function masteryToggle(d, n) {
+    var all = masteryAll();
+    var key = d + '::' + n;
+    if (all[key]) delete all[key];
+    else all[key] = Date.now();
+    write('mastery', all);
+    return !!all[key];
+  }
+
   function renderQuiz() {
     var pool = quizPool();
     if (!pool.length) { setPanel('Quiz', '', true); bodyEl.appendChild(el('div', 'sb-empty', 'No quiz items for this diagram.')); return; }
@@ -1113,7 +1127,7 @@
     sc.appendChild(el('div', 'sb-h-s', 'The Book Store project is mirrored into this page, so you can read real source without leaving the diagram. Every code reference - a chip in a node card, a row in the code lab, a walkthrough step, a quiz citation - opens the same in-page viewer: a header with the file\u2019s role and shape, a structure outline you can jump through, the whole file with syntax highlighting, and the lines that matter carrying their explanation beside them. Diagrams that have a walkthrough get a Walk through button in the toolbar: step through the source with the matching database query count or transaction report beside each step. If a generated asset is missing the viewer says which script to rebuild it, rather than sending you to a raw text dump.'));
     bodyEl.appendChild(sc);
     var s2 = section('In the diagram');
-    s2.appendChild(el('div', 'sb-h-s', 'Hover or tab-focus any node or relationship for the semantic passport. Concept chips inside the card jump to the same idea in other diagrams. Press P for the presentation stage: the diagram takes the whole screen, the step you are on stays lit while the rest falls away, and the rail on the right carries the narration, a passport card for every node in the step, how those nodes connect and the concepts they belong to. The step rail in the panel header jumps anywhere, Auto plays the walk on its own, and the arrows or Space step forward.'));
+    s2.appendChild(el('div', 'sb-h-s', 'Hover or tab-focus any node or relationship for the semantic passport. Click a node to pin its passport, then press I know this to mark it learned - the hub counts what you know on the Concepts and Progress pages. Concept chips inside the card jump to the same idea in other diagrams. Press P for the presentation stage: the diagram takes the whole screen, the step you are on stays lit while the rest falls away, and the rail on the right carries the narration, a passport card for every node in the step, how those nodes connect and the concepts they belong to. The step rail in the panel header jumps anywhere, Auto plays the walk on its own, and the arrows or Space step forward.'));
     bodyEl.appendChild(s2);
     clear(footEl);
     footEl.appendChild(btn('Done', 'sb-btn is-primary', close));
@@ -1732,6 +1746,13 @@
     Array.prototype.forEach.call(card.querySelectorAll('.sb-card-extra'), function (n) { n.parentNode.removeChild(n); });
     if (kind !== 'n') return;
     var wrap = el('div', 'sb-card-extra');
+    if (masteryHas(SELF, nid)) {
+      var kb = el('span', 'sb-chip');
+      kb.setAttribute('data-sb-on', '');
+      kb.appendChild(el('span', 'sb-dot'));
+      kb.appendChild(el('span', null, 'known'));
+      wrap.appendChild(kb);
+    }
     var slugs = conceptsFor(SELF, nid);
     var codeRows = DIA ? ((DIA.code || []).filter(function (c) { return c.node === nid; })) : [];
     if (codeRows.length) {
@@ -1838,6 +1859,55 @@
     return tag === 'input' || tag === 'textarea' || tag === 'select' || t.isContentEditable;
   }
 
+  /* The hover card is pointer-events:none by design, so no chip inside it can
+   * ever be pressed for real. The clickable "I know this" toggle therefore
+   * lives in the passport's own action column, and a MutationObserver keeps
+   * its label and state in step with whatever node the passport is showing. */
+  function wirePassportMastery() {
+    var chip = document.getElementById('focus-chip');
+    var idEl = document.getElementById('focus-id');
+    var acts = chip ? chip.querySelector('.relationship-lens-actions') : null;
+    if (!chip || !idEl || !acts || !DIA) return;
+    var b = el('button', 'sb-chip');
+    b.type = 'button';
+    b.id = 'sb-mastery';
+    b.setAttribute('aria-pressed', 'false');
+    b.appendChild(el('span', 'sb-dot'));
+    var lab = el('span');
+    b.appendChild(lab);
+    function currentNode() {
+      var v = (idEl.textContent || '').trim();
+      if (!v) return null;
+      return (DIA.nodes || []).some(function (n) { return n.id === v; }) ? v : null;
+    }
+    function sync() {
+      if (!b.isConnected) acts.appendChild(b);
+      var nid = currentNode();
+      if (!nid || chip.hasAttribute('hidden')) { b.style.display = 'none'; return; }
+      b.style.display = '';
+      var on = masteryHas(SELF, nid);
+      if (on) b.setAttribute('data-sb-on', '');
+      else b.removeAttribute('data-sb-on');
+      var text = on ? 'Known' : 'I know this';
+      if (lab.textContent !== text) lab.textContent = text;
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    }
+    b.addEventListener('pointerdown', function (e) { e.stopPropagation(); });
+    b.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var nid = currentNode();
+      if (!nid) return;
+      var on = masteryToggle(SELF, nid);
+      toast(on ? 'Marked "I know this"' : 'Known mark removed');
+      sync();
+    });
+    acts.appendChild(b);
+    var mo = new MutationObserver(sync);
+    mo.observe(idEl, { characterData: true, childList: true });
+    mo.observe(chip, { attributes: true, attributeFilter: ['hidden'] });
+    sync();
+  }
+
   function wire() {
     var card = document.getElementById('archify-hover-card');
     if (card) {
@@ -1847,6 +1917,7 @@
         else if (d.kind === null) { Array.prototype.forEach.call(card.querySelectorAll('.sb-card-extra'), function (n) { n.parentNode.removeChild(n); }); }
       });
     }
+    wirePassportMastery();
 
     document.addEventListener('keydown', function (e) {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); open('search'); return; }

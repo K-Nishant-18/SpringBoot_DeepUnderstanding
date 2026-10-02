@@ -154,6 +154,22 @@
 .sb-card-extra { margin-top: 8px; }
 .sb-bar button[data-sb-on] { background: var(--sb-accent); color: #04140f; }
 .sb-chip .sb-dot { width: 5px; height: 5px; border-radius: 999px; background: var(--sb-accent); flex: none; }
+/* The passport's "I know this" toggle lives outside #sbkit, where the
+ * diagram's .focus-chip button rule (border:0, transparent background) beats
+ * the plain .sb-chip class. The id wins back the chip look. */
+#sb-mastery {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid var(--sb-edge);
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.14);
+  color: var(--sb-ink-soft);
+}
+#sb-mastery:hover,
+#sb-mastery:focus-visible { background: rgba(52, 211, 153, 0.2); border-color: var(--sb-accent); color: var(--sb-ink); }
+#sb-mastery[data-sb-on] { background: rgba(52, 211, 153, 0.24); border-color: var(--sb-accent); color: var(--sb-ink); }
 
 #sbkit .sb-link {
   display: inline-flex; align-items: center; gap: 4px; font: inherit; font-size: 11px;

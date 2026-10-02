@@ -53,16 +53,26 @@ const HUB = `
   o.trackCards=document.querySelectorAll('.track .grid .card').length;
   o.tracksHash=location.hash;
 
-  // progress tab (seed the review queue first so the due list renders with one row)
+  // progress tab (seed the review queue and one known node first)
   localStorage.setItem('sbk.v1.review', JSON.stringify({
     'Probe: is a past-due question listed on the hub?': { d: 'Spring_Boot_Roadmap', n: 'partA', due: '2020-01-01', stage: 0, misses: 2 },
     'Probe: is a future question held back?': { d: 'Spring_Boot_Roadmap', n: '', due: '2099-12-31', stage: 1, misses: 1 }
   }));
+  const rmNode=(((window.SB_INDEX.diagrams||{}).Spring_Boot_Roadmap||{}).nodes||[])[0];
+  const masterySeed={};
+  if(rmNode) masterySeed['Spring_Boot_Roadmap::'+rmNode.id]=Date.now();
+  localStorage.setItem('sbk.v1.mastery', JSON.stringify(masterySeed));
   [...nav.querySelectorAll('button')].find(b=>b.getAttribute('data-tab')==='progress').click();
   await sleep(200);
   o.progressVisible=!!document.querySelector('section.pane[data-pane="progress"][data-on]');
   o.progressRows=document.querySelectorAll('#progress .prow').length-1;
   o.progressStats=document.querySelectorAll('#progress .stat').length;
+  o.knownCells=document.querySelectorAll('#progress .prow [data-known]').length;
+  const rmTitle=(window.SB_INDEX.diagrams.Spring_Boot_Roadmap||{}).title||'';
+  const rmRow=[...document.querySelectorAll('#progress .prow')].find(r=>{const b=r.querySelector('b');return b&&b.textContent===rmTitle;});
+  o.roadmapKnown=(rmRow&&rmRow.querySelector('[data-known]')||{}).textContent||'';
+  o.knownStat=[...document.querySelectorAll('#progress .stat')].some(s=>/nodes marked known/.test(s.textContent));
+  o.conceptKnownTags=[...document.querySelectorAll('#conceptlist .card .m span')].filter(s=>/\\/\\d+ known$/.test(s.textContent)).length;
   o.reviewRows=document.querySelectorAll('#progress .rrow').length;
   o.reviewBtn=!!document.querySelector('#progress .rrow button');
   o.reviewStat=[...document.querySelectorAll('#progress .stat')].some(s=>/due for review/.test(s.textContent));
@@ -190,6 +200,10 @@ try {
     if (!h.tracksVisible || h.trackSections !== 6) p.push('tracks=' + h.trackSections);
     if (h.trackCards !== 21) p.push('trackCards=' + h.trackCards);
     if (!h.progressVisible || h.progressRows !== 21) p.push('progress=' + h.progressRows);
+    if (h.knownCells !== 21) p.push('known-cells=' + h.knownCells);
+    if (!/^1\//.test(h.roadmapKnown || '')) p.push('roadmap-known=' + h.roadmapKnown);
+    if (!h.knownStat) p.push('known-stat');
+    if (h.conceptKnownTags !== 30) p.push('concept-known-tags=' + h.conceptKnownTags);
     if (h.reviewRows !== 1 || !h.reviewBtn) p.push('review=' + h.reviewRows);
     if (!h.reviewStat) p.push('review-stat');
     if (!h.themeFlipped || !h.themePersisted) p.push('theme');
