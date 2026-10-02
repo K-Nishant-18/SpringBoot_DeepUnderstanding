@@ -23,6 +23,25 @@
 
   function quizFor(d) { return (STUDY.quiz || []).filter(function (q) { return q.d === d; }).length; }
 
+  function todayStr() {
+    var t = new Date();
+    return t.getFullYear() + '-' + ('0' + (t.getMonth() + 1)).slice(-2) + '-' + ('0' + t.getDate()).slice(-2);
+  }
+
+  function reviewJump(d, text) {
+    var pool = (STUDY.quiz || []).filter(function (q) { return q.d === d; });
+    var idx = -1;
+    pool.forEach(function (q, i) { if (q.q === text) idx = i; });
+    if (idx >= 0) {
+      var quiz = read('quiz', {});
+      var rec = quiz[d] || { i: 0, score: 0, done: 0, missed: [] };
+      rec.i = idx;
+      quiz[d] = rec;
+      write('quiz', quiz);
+    }
+    location.href = d + '.html#view=quiz';
+  }
+
   function card(title, desc, meta, onClick, badge) {
     var c = el('button', 'card');
     c.type = 'button';
@@ -244,9 +263,13 @@
     var opened = keys.filter(function (k) { return progress[k]; }).length;
     var qDone = 0, qRight = 0;
     keys.forEach(function (k) { var r = quiz[k]; if (r) { qDone += r.done; qRight += r.score; } });
+    var rev = read('review', {});
+    var revKeys = Object.keys(rev);
+    var today = todayStr();
+    var due = revKeys.filter(function (k) { return (rev[k] || {}).due <= today; });
 
     var stats = el('div', 'stats');
-    [[opened + '/' + total, 'diagrams opened'], [qRight + '/' + qDone, 'quiz answers right'], [String(Object.keys(CON).length), 'concepts available']]
+    [[opened + '/' + total, 'diagrams opened'], [qRight + '/' + qDone, 'quiz answers right'], [String(due.length), 'due for review'], [String(Object.keys(CON).length), 'concepts available']]
       .forEach(function (r) {
         var s = el('div', 'stat');
         s.appendChild(el('b', null, r[0]));
@@ -287,6 +310,24 @@
       r.appendChild(bar);
       host.appendChild(r);
     });
+
+    var box = el('div', 'review-box');
+    box.appendChild(el('h3', null, due.length ? 'Due for review (' + due.length + ')' : 'Due for review'));
+    if (!due.length) {
+      box.appendChild(el('p', 'hint', revKeys.length
+        ? 'Nothing due today - ' + revKeys.length + ' question' + (revKeys.length === 1 ? '' : 's') + ' coming up later. The queue fills from wrong quiz answers: back after a day, then three, then seven.'
+        : 'Nothing here yet. Miss a quiz question and it comes back for review after a day, then three, then seven. Press R on any diagram for the full queue.'));
+    } else {
+      due.sort(function (a, b) { return (rev[a] || {}).due < (rev[b] || {}).due ? -1 : 1; }).forEach(function (k) {
+        var ent = rev[k] || {};
+        var row = el('div', 'rrow');
+        row.appendChild(el('span', 'q', k));
+        row.appendChild(el('span', 'm', (ent.d || '').replace('Spring_Boot_', '') + ' · missed ' + (ent.misses || 0)));
+        row.appendChild(btn('Open quiz', 'sb-btn', function () { reviewJump(ent.d, k); }));
+        box.appendChild(row);
+      });
+    }
+    host.appendChild(box);
   }
 
   function tab(name) {
@@ -334,7 +375,7 @@
     document.getElementById('print').addEventListener('click', function () { window.print(); });
     document.getElementById('print2').addEventListener('click', function () { window.print(); });
     document.getElementById('reset').addEventListener('click', function () {
-      ['progress', 'quiz'].forEach(function (k) { localStorage.removeItem(LS + k); });
+      ['progress', 'quiz', 'review'].forEach(function (k) { localStorage.removeItem(LS + k); });
       renderProgress();
       renderRail();
       if (window.SBKit) window.SBKit.close();

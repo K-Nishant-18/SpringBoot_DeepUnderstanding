@@ -106,7 +106,7 @@
       },
       {
         sel: '#sbkit .sb-bar', place: 'bottom', title: 'The toolbar',
-        body: 'Everything else lives up here: search, the code lab with the mirrored source, the quiz for this diagram, Present mode, the glossary, debugging by symptom, the interview bank, the tour and the hub.'
+        body: 'Everything else lives up here: search, the code lab with the mirrored source, the quiz for this diagram, the review queue, Present mode, the glossary, debugging by symptom, the interview bank, the tour and the hub.'
       },
       {
         get: function () { return barButton('Present'); }, place: 'bottom', title: 'Present mode',

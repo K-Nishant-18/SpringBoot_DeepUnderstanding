@@ -281,8 +281,9 @@
     setTimeout(function () { input.focus(); input.select(); }, 10);
   }
 
-  function quizPool() {
+  function quizPool(d) {
     var all = STUDY.quiz;
+    if (d) return all.filter(function (q) { return q.d === d; });
     var mine = all.filter(function (q) { return q.d === SELF; });
     if (DIA) return mine.length ? mine : all;
     return all;
@@ -291,6 +292,30 @@
   function quizStore() {
     var all = read('quiz', {});
     return all;
+  }
+
+  function reviewAll() { return read('review', {}); }
+
+  function reviewDay(offset) {
+    var t = new Date();
+    t.setDate(t.getDate() + (offset || 0));
+    return t.getFullYear() + '-' + ('0' + (t.getMonth() + 1)).slice(-2) + '-' + ('0' + t.getDate()).slice(-2);
+  }
+
+  /* Spaced repetition for the quiz: a wrong answer is queued for tomorrow, a
+   * correct one walks it through 3 days, 7 days, then out of the queue. */
+  function reviewMark(q, ok) {
+    var all = reviewAll();
+    var ent = all[q.q];
+    if (!ok) {
+      all[q.q] = { d: q.d, n: q.n || '', due: reviewDay(1), stage: 0, misses: (ent ? ent.misses || 0 : 0) + 1 };
+      write('review', all);
+      return;
+    }
+    if (!ent) return;
+    if (ent.stage >= 2) { delete all[q.q]; toast('Cleared from the review queue'); }
+    else { ent.stage += 1; ent.due = reviewDay(ent.stage === 1 ? 3 : 7); all[q.q] = ent; }
+    write('review', all);
   }
 
   function renderQuiz() {
@@ -343,6 +368,7 @@
           });
           if (ok) rec.score++;
           else if (rec.missed.indexOf(q.q) < 0) rec.missed.push(q.q);
+          reviewMark(q, ok);
           rec.done++;
           commit();
           var pct = pool.length ? Math.round((rec.done / pool.length) * 100) : 0;
@@ -388,6 +414,65 @@
       footEl.appendChild(btn('Reset', 'sb-btn', function () { all[SELF] = { i: 0, score: 0, done: 0, missed: [] }; write('quiz', all); rec = all[SELF]; toast('Quiz reset'); paint(); }));
     }
     paint();
+  }
+
+  function openQuizAt(d, text) {
+    var pool = quizPool(d);
+    var idx = -1;
+    pool.forEach(function (q, i) { if (q.q === text) idx = i; });
+    var all = quizStore();
+    if (idx >= 0) {
+      var rec = all[d] || { i: 0, score: 0, done: 0, missed: [] };
+      rec.i = idx;
+      all[d] = rec;
+      write('quiz', all);
+    }
+    if (d === SELF) { open('quiz'); return; }
+    location.href = d + '.html#view=quiz';
+  }
+
+  function reviewRow(key, ent, dueNow) {
+    var row = el('div', 'sb-note-item');
+    if (dueNow) row.setAttribute('data-due', '');
+    var head = el('div', 'sb-row');
+    head.appendChild(el('span', 'sb-nt', key));
+    head.appendChild(el('span', 'sb-spacer'));
+    head.appendChild(el('span', 'sb-lk', dueNow ? 'due now' : 'due ' + ent.due));
+    row.appendChild(head);
+    row.appendChild(el('div', 'sb-nb', ent.d.replace('Spring_Boot_', '') + (ent.n ? ' / ' + ent.n : '') +
+      ' · missed ' + (ent.misses || 0) + ' time' + ((ent.misses || 0) === 1 ? '' : 's')));
+    var acts = el('div', 'sb-row');
+    acts.style.marginTop = '7px';
+    acts.appendChild(btn('Open quiz', 'sb-btn is-primary', function () { openQuizAt(ent.d, key); }));
+    acts.appendChild(btn('Open diagram', 'sb-btn', function () { go(ent.d, ent.n); }));
+    row.appendChild(acts);
+    return row;
+  }
+
+  function renderReview() {
+    var all = reviewAll();
+    var today = reviewDay(0);
+    var keys = Object.keys(all);
+    var due = [], later = [];
+    keys.forEach(function (k) { ((all[k] || {}).due <= today ? due : later).push(k); });
+    due.sort(function (a, b) { return all[a].due < all[b].due ? -1 : 1; });
+    later.sort(function (a, b) { return all[a].due < all[b].due ? -1 : 1; });
+    setPanel('Review queue', due.length + ' due' + (later.length ? ' · ' + later.length + ' coming up' : ''), true);
+    if (!keys.length) {
+      bodyEl.appendChild(el('div', 'sb-empty', 'Nothing in the queue. A wrong quiz answer comes back here after a day, then after three, then after seven.'));
+      return;
+    }
+    if (due.length) {
+      var s = section('Due today (' + due.length + ')');
+      due.forEach(function (k) { s.appendChild(reviewRow(k, all[k], true)); });
+      bodyEl.appendChild(s);
+    }
+    if (later.length) {
+      var s2 = section('Coming up (' + later.length + ')');
+      later.forEach(function (k) { s2.appendChild(reviewRow(k, all[k], false)); });
+      bodyEl.appendChild(s2);
+    }
+    bodyEl.appendChild(el('div', 'sb-count', 'A correct answer moves it on - 3 days, then 7, then out of the queue. A wrong one puts it back at a day.'));
   }
 
   function renderConcept(slug) {
@@ -1001,6 +1086,7 @@
     tb.innerHTML = '<tbody>' +
       '<tr><td>Ctrl / Cmd + K</td><td>Search everything</td></tr>' +
       '<tr><td>q</td><td>Quiz on this diagram</td></tr>' +
+      '<tr><td>r</td><td>Review queue: wrong answers return after 1 day, then 3, then 7</td></tr>' +
       '<tr><td>p</td><td>Presentation stage: the guided view with narration and a card per node</td></tr>' +
       '<tr><td>g</td><td>Glossary</td></tr>' +
       '<tr><td>t</td><td>Troubleshooting</td></tr>' +
@@ -1625,6 +1711,7 @@
     if (!view) return;
     if (view === 'search') return renderSearch(state.arg);
     if (view === 'quiz') return renderQuiz();
+    if (view === 'review') return renderReview();
     if (view === 'concept') return renderConcept(state.arg);
     if (view === 'glossary') return renderGlossary(state.arg);
     if (view === 'trouble') return renderTrouble(state.arg);
@@ -1718,6 +1805,7 @@
       bar.appendChild(barBtn('Code lab', 'C', function () { open('info'); }));
     }
     bar.appendChild(barBtn('Quiz', 'Q', function () { open('quiz'); }));
+    bar.appendChild(barBtn('Review', 'R', function () { open('review'); }));
     bar.appendChild(barBtn('Present', 'P', function () { if (presentState.on) close(); else startPresent(0); }));
     bar.appendChild(barBtn('Terms', 'G', function () { open('glossary'); }));
     bar.appendChild(barBtn('Debug', 'T', function () { open('trouble'); }));
@@ -1774,6 +1862,7 @@
       if (view === 'present' && k === 'end') { e.preventDefault(); stepTo(presentSteps().length - 1, true); return; }
       if (view) return;
       if (k === 'q') { e.preventDefault(); open('quiz'); }
+      else if (k === 'r') { e.preventDefault(); open('review'); }
       else if (k === 'p') { e.preventDefault(); startPresent(0); }
       else if (k === 'g') { e.preventDefault(); open('glossary'); }
       else if (k === 't') { e.preventDefault(); open('trouble'); }
@@ -1789,7 +1878,7 @@
     var hash = location.hash.replace('#', '');
     var asView = /^view=/.test(hash);
     if (asView) {
-      var VIEWS = { search: 1, quiz: 1, glossary: 1, trouble: 1, interview: 1, tracks: 1, help: 1, info: 1 };
+      var VIEWS = { search: 1, quiz: 1, review: 1, glossary: 1, trouble: 1, interview: 1, tracks: 1, help: 1, info: 1 };
       var want = hash.slice(5);
       if (VIEWS[want]) setTimeout(function () { open(want); }, 260);
     } else {

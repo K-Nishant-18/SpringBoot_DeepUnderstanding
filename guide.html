@@ -359,8 +359,8 @@
 
   <!-- 07 -->
   <section class="sec" id="s07">
-    <div class="sechead"><span class="num">07</span><h2>Practice tools - Quiz, Glossary, Debug, Interview</h2></div>
-    <p class="sub">These four things are what turn "reading" into "remembering". Each one has its own shortcut.</p>
+    <div class="sechead"><span class="num">07</span><h2>Practice tools - Quiz, Review, Glossary, Debug, Interview</h2></div>
+    <p class="sub">These five things are what turn "reading" into "remembering". Each one has its own shortcut.</p>
     <table class="tbl">
       <thead><tr><th>Tool</th><th>Shortcut</th><th>What it does and how to use it</th></tr></thead>
       <tbody>
@@ -368,6 +368,10 @@
           <td class="d">315 items, with separate questions for each diagram. The score meter runs across the top.
           A wrong answer brings an <b>explanation + Walk through + captured response + source link</b> - that is the real learning flow.
           <code class="inline-code">missed</code> questions are tracked.</td></tr>
+        <tr><td class="k">Review queue</td><td class="k"><kbd>R</kbd></td>
+          <td class="d">Spaced repetition for the quiz: a wrong answer comes back here after <b>1 day</b>, a correct
+          one moves it to <b>3 days</b>, then <b>7 days</b>, then out of the queue. The Progress tab shows what is
+          due today, and every row jumps straight to that question.</td></tr>
         <tr><td class="k">Glossary</td><td class="k"><kbd>G</kbd></td>
           <td class="d">96 terms, all searchable. Read the whole glossary once before an interview and your definitions get tight.</td></tr>
         <tr><td class="k">Debug table</td><td class="k"><kbd>T</kbd></td>
@@ -388,10 +392,12 @@
     <div class="split">
       <div class="card"><h3><i class="dot"></i>Progress tab</h3>
         <p>A table per diagram: opened or not, how many quiz answers are right, and one bar that adds both
-        together (50% opened + 50% quiz). The Tracks tab has a progress bar above each track.</p>
+        together (50% opened + 50% quiz). Below the table, <b>Due for review</b> lists the quiz questions the queue
+        wants you to retake, each with an "Open quiz" jump. The Tracks tab has a progress bar above each track.</p>
         <p><b>Reset all progress</b> clears everything at once - at the bottom of the Progress tab.</p></div>
       <div class="card"><h3><i class="dot"></i>Everything is local</h3>
-        <p><code class="inline-code">sbk.v1.progress</code>, <code class="inline-code">sbk.v1.quiz</code> - two keys,
+        <p><code class="inline-code">sbk.v1.progress</code>, <code class="inline-code">sbk.v1.quiz</code>,
+        <code class="inline-code">sbk.v1.review</code> - three keys,
         all in browser <code class="inline-code">localStorage</code>.
         No account, no server call. Your progress does not move to another browser or machine.</p></div>
       <div class="card"><h3><i class="dot"></i>Theme</h3>
@@ -418,6 +424,7 @@
       <tbody>
         <tr><td class="k"><kbd>Ctrl</kbd> / <kbd>Cmd</kbd> + <kbd>K</kbd></td><td class="d">Search - all of it (diagrams, nodes, concepts, glossary, debug, interview)</td></tr>
         <tr><td class="k"><kbd>Q</kbd></td><td class="d">Quiz - questions for this diagram, with a score</td></tr>
+        <tr><td class="k"><kbd>R</kbd></td><td class="d">Review queue - what you got wrong, and when each question is due again</td></tr>
         <tr><td class="k"><kbd>P</kbd></td><td class="d">Presentation stage - light on the current step, narration on the right</td></tr>
         <tr><td class="k"><kbd>C</kbd></td><td class="d">Code lab - concepts, mirrored source, walkthroughs</td></tr>
         <tr><td class="k"><kbd>G</kbd></td><td class="d">Glossary - 96 terms, searchable</td></tr>

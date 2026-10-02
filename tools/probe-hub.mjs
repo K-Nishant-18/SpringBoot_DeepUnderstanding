@@ -53,12 +53,19 @@ const HUB = `
   o.trackCards=document.querySelectorAll('.track .grid .card').length;
   o.tracksHash=location.hash;
 
-  // progress tab
+  // progress tab (seed the review queue first so the due list renders with one row)
+  localStorage.setItem('sbk.v1.review', JSON.stringify({
+    'Probe: is a past-due question listed on the hub?': { d: 'Spring_Boot_Roadmap', n: 'partA', due: '2020-01-01', stage: 0, misses: 2 },
+    'Probe: is a future question held back?': { d: 'Spring_Boot_Roadmap', n: '', due: '2099-12-31', stage: 1, misses: 1 }
+  }));
   [...nav.querySelectorAll('button')].find(b=>b.getAttribute('data-tab')==='progress').click();
   await sleep(200);
   o.progressVisible=!!document.querySelector('section.pane[data-pane="progress"][data-on]');
   o.progressRows=document.querySelectorAll('#progress .prow').length-1;
   o.progressStats=document.querySelectorAll('#progress .stat').length;
+  o.reviewRows=document.querySelectorAll('#progress .rrow').length;
+  o.reviewBtn=!!document.querySelector('#progress .rrow button');
+  o.reviewStat=[...document.querySelectorAll('#progress .stat')].some(s=>/due for review/.test(s.textContent));
 
   // theme toggle
   const before=document.documentElement.getAttribute('data-theme');
@@ -183,6 +190,8 @@ try {
     if (!h.tracksVisible || h.trackSections !== 6) p.push('tracks=' + h.trackSections);
     if (h.trackCards !== 21) p.push('trackCards=' + h.trackCards);
     if (!h.progressVisible || h.progressRows !== 21) p.push('progress=' + h.progressRows);
+    if (h.reviewRows !== 1 || !h.reviewBtn) p.push('review=' + h.reviewRows);
+    if (!h.reviewStat) p.push('review-stat');
     if (!h.themeFlipped || !h.themePersisted) p.push('theme');
     if (!h.troubleOpen || !h.troubleRows) p.push('trouble=' + h.troubleRows);
     if (h.troubleFiltered >= h.troubleRows) p.push('trouble-filter-noop');

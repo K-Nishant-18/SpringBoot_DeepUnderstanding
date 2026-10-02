@@ -92,7 +92,8 @@ mirrored Book Store file — 48 files, 3,732 lines, byte-for-byte from the app.
 captured from the running application: real query counts, real timings.
 
 **Test yourself.** 315 quiz items, 47 debug entries, 154 interview questions, 96
-glossary terms — all searchable in one keystroke.
+glossary terms — all searchable in one keystroke. Miss a question and the
+review queue brings it back after a day, then three, then seven.
 
 ---
 
@@ -144,6 +145,7 @@ shortcut, best practices, and a 30-day plan.
 | Interactive diagrams | **21** across **6** learning tracks |
 | Nodes · relationships · guided views | **196** · **209** · **61** |
 | Quiz items | **315** |
+| Review queue | wrong answers return after **1 / 3 / 7 days** |
 | Debug / troubleshooting entries | **47** |
 | Interview questions with answers | **154** |
 | Glossary terms | **96** |
@@ -191,7 +193,7 @@ That is the entire setup. Then:
 | Key | Opens |
 |---|---|
 | `Ctrl` / `Cmd` + `K` | Search — everything at once |
-| `Q` · `P` · `C` | Quiz · Present mode · Code lab |
+| `Q` · `R` · `P` · `C` | Quiz · Review queue · Present mode · Code lab |
 | `G` · `T` · `I` | Glossary · Debug by symptom · Interview bank |
 | `?` · `Esc` | Help · close whatever is open |
 | `U` | Tour — the walk through this page, again |
